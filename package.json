@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node local-server.js",
-    "build": "netlify-lambda build express"
+    "build": "netlify-lambda build src"
   },
   "author": "andrea.christina.unger@gmail.com",
   "license": "MIT",
