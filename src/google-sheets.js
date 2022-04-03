@@ -1,52 +1,46 @@
 require('dotenv').config();
 const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
 const { google } = require('googleapis');
-const sheets = google.sheets('v4');
 
-async function authToken() {
-  const auth = new google.auth.GoogleAuth({
+let sheets;
+
+async function load() {
+  const auth = await new google.auth.GoogleAuth({
     keyFile: 'credentials.json',
     scopes: ['https://www.googleapis.com/auth/spreadsheets']
-  });
+  }).getClient();
 
-  return auth.getClient();
+  sheets = google.sheets({ version: 'v4', auth });
 }
 
-async function append(items) {
-  try {
-    const auth = await authToken();
-    const doc = await sheets.spreadsheets.get({
-      spreadsheetId,
-      auth,
-    });
+async function appendFisheriesData(items, callback) {
+  if (!sheets) await load();
 
-    let range;
-    let data;
-
-    for (item of items) {
-      if (item.type == 'Catch') {
-        range = 'Fisheries';
-        data = asFisheriesRow(item);
-      }
-      if (item.type == 'Trash') {
-        range = 'Beach Clean';
-        data = asBeachCleanRow(item);
-      }
-
-      const res = doc.append({
-        range: range,
-        valueInputOption: 'RAW', // or: 'USER_ENTERED'
-        resource: {
-          values: data
-        }
-      });
-
-      if (res.status == 200) item.synced = true;
+  sheets.spreadsheets.values.append({
+    spreadsheetId: spreadsheetId,
+    range: 'Fisheries',
+    valueInputOption: 'RAW',
+    insertDataOption: 'INSERT_ROWS',
+    resource: {
+      values: items.map(item => asFisheriesRow(item))
     }
-  } catch (error) {
-    // TODO
-    console.log(error);
-  }
+  }, callback);
+}
+
+async function appendBeachCleanData(items, callback) {
+  if (!sheets) await load();
+
+  return sheets.spreadsheets.values.append({
+    spreadsheetId: spreadsheetId,
+    range: 'Beach Clean',
+    valueInputOption: 'RAW',
+    insertDataOption: 'INSERT_ROWS',
+    resource: {
+      values: items
+        .filter(item => item.type == 'Trash')
+        .map(item => asBeachCleanRow(item))
+    }
+  }, callback);
 }
 
 function asBeachCleanRow(item) {
@@ -93,4 +87,4 @@ function asFisheriesRow(item) {
   ];
 }
 
-module.exports = { append };
+module.exports = { appendFisheriesData, appendBeachCleanData };
