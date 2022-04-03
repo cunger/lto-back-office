@@ -1,6 +1,5 @@
 require('dotenv').config();
 const API_KEY = process.env.LTO_BACK_OFFICE_API_KEY;
-if (!API_KEY) return;
 
 const uploader = require('./uploader');
 const serverless = require('serverless-http');
@@ -12,7 +11,7 @@ router.get('/ping', (request, response) => {
 });
 
 router.post('/data', (request, response) => {
-  if (request.headers['x-auth-token'] !== API_KEY) {
+  if (!request.headers['x-auth-token'] || request.headers['x-auth-token'] !== API_KEY) {
     return response.sendStatus(401);
   }
 
@@ -29,7 +28,7 @@ router.post('/data', (request, response) => {
 
 const app = express();
 app.use(express.json());
-app.use('/.netlify/functions/server', router);
+app.use('/.netlify/functions/api', router);
 app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
 module.exports = app;
