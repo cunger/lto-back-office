@@ -13,10 +13,10 @@ async function load() {
   sheets = google.sheets({ version: 'v4', auth });
 }
 
-async function appendFisheriesData(items, callback) {
+async function appendFisheriesData(items) {
   if (!sheets) await load();
 
-  sheets.spreadsheets.values.append({
+  const response = await sheets.spreadsheets.values.append({
     spreadsheetId: spreadsheetId,
     range: 'Fisheries',
     valueInputOption: 'RAW',
@@ -24,13 +24,15 @@ async function appendFisheriesData(items, callback) {
     resource: {
       values: items.map(item => asFisheriesRow(item))
     }
-  }, callback);
+  });
+
+  return response;
 }
 
-async function appendBeachCleanData(items, callback) {
+async function appendBeachCleanData(items) {
   if (!sheets) await load();
 
-  return sheets.spreadsheets.values.append({
+  const response = await sheets.spreadsheets.values.append({
     spreadsheetId: spreadsheetId,
     range: 'Beach Clean',
     valueInputOption: 'RAW',
@@ -40,7 +42,9 @@ async function appendBeachCleanData(items, callback) {
         .filter(item => item.type == 'Trash')
         .map(item => asBeachCleanRow(item))
     }
-  }, callback);
+  });
+
+  return response;
 }
 
 function asBeachCleanRow(item) {

@@ -2,31 +2,34 @@ const GoogleSheets = require('./google-sheets');
 
 async function upload(items) {
   let result = { uploaded: [], errors: [] };
+
+  // First, get image data and upload images to Google Drive.
+  // Replace images by link.
+  // TODO
+
+  // Then append rows to Google Sheet.
+
+  const catches = items.filter(item => item.type == 'Catch');
+  const trashes = items.filter(item => item.type == 'Trash');
+
+  let response;
+
   try {
-    // First, get image data and upload images to Google Drive.
-    // Replace images by link.
-    // TODO
+    response = await GoogleSheets.appendFisheriesData(catches);
 
-    // Then append rows to Google Sheet.
+    if (response.status == 200) {
+      catches.forEach(item => result.uploaded.push(item.id));
+    }
+  } catch (error) {
+    result.errors.push(error);
+  }
 
-    const callback = (error, response) => {
-      if (error) result.errors.push(error);
-      if (response.status == 200) {
-        items.forEach(item => result.uploaded.push(item.id));
-      };
-    };
+  try {
+    response = await GoogleSheets.appendBeachCleanData(trashes);
 
-    await GoogleSheets.appendFisheriesData(
-      items.filter(item => item.type == 'Catch'),
-      callback
-    );
-
-    await GoogleSheets.appendBeachCleanData(
-      items.filter(item => item.type == 'Trash'),
-      callback
-    );
-
-    return result;
+    if (response.status == 200) {
+      trashes.forEach(item => result.uploaded.push(item.id));
+    }
   } catch (error) {
     result.errors.push(error);
   }
