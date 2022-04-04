@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node local-server.js",
-    "build": "netlify-lambda build src"
+    "build": "node generate-credentials-file.js && netlify-lambda build src"
   },
   "author": "andrea.christina.unger@gmail.com",
   "license": "MIT",
@@ -17,6 +17,7 @@
     "dotenv": "^16.0.0",
     "encoding": "^0.1.13",
     "express": "^4.17.3",
+    "fs": "^0.0.1-security",
     "googleapis": "^99.0.0",
     "netlify-lambda": "^2.0.15",
     "serverless-http": "^2.7.0"
