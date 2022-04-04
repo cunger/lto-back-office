@@ -18,7 +18,7 @@ async function upload(items) {
     response = await GoogleSheets.appendFisheriesData(catches);
 
     if (response.status == 200) {
-      catches.forEach(item => result.uploaded.push(item.id));
+      for (item of catches) result.uploaded.push(item.id);
     }
   } catch (error) {
     result.errors.push(error);
@@ -28,7 +28,7 @@ async function upload(items) {
     response = await GoogleSheets.appendBeachCleanData(trashes);
 
     if (response.status == 200) {
-      trashes.forEach(item => result.uploaded.push(item.id));
+      for (item of trashes) result.uploaded.push(item.id);
     }
   } catch (error) {
     result.errors.push(error);
