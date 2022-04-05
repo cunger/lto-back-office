@@ -16,6 +16,6 @@ const credentials = {
 };
 
 fs.writeFileSync(
-  'credentials.json',
+  'src/credentials.json',
   JSON.stringify(credentials, null, 2)
 );
