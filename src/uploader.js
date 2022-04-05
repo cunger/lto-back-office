@@ -21,6 +21,7 @@ async function upload(items) {
       for (item of catches) result.uploaded.push(item.id);
     }
   } catch (error) {
+    console.log(error);
     result.errors.push(`${error}`);
   }
 
@@ -31,6 +32,7 @@ async function upload(items) {
       for (item of trashes) result.uploaded.push(item.id);
     }
   } catch (error) {
+    console.log(error);
     result.errors.push(`${error}`);
   }
 
