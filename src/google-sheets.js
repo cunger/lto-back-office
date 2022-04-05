@@ -7,6 +7,7 @@ let sheets;
 async function load() {
   const auth = await new google.auth.GoogleAuth({
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    spreadsheetId: spreadsheetId,
     credentials: {
       client_email: process.env.GOOGLE_CLIENT_EMAIL,
       private_key: process.env.GOOGLE_PRIVATE_KEY
