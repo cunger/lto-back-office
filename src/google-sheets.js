@@ -1,8 +1,14 @@
 require('dotenv').config();
-const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
 const { google } = require('googleapis');
 
 let sheets;
+
+console.log(`Ready? ${process.env.GOOGLE_SPREADSHEET_ID !== undefined}$`);
+console.log(`Ready? ${process.env.GOOGLE_CLIENT_ID !== undefined}$`);
+console.log(`Ready? ${process.env.GOOGLE_CLIENT_EMAIL !== undefined}$`);
+console.log(`Ready? ${process.env.GOOGLE_PRIVATE_KEY_ID !== undefined}$`);
+console.log(`Ready? ${process.env.GOOGLE_PRIVATE_KEY !== undefined}$`);
+console.log(`Ready? ${process.env.GOOGLE_CLIENT_X509_CERT_URL !== undefined}$`);
 
 async function load() {
   const auth = await new google.auth.GoogleAuth({
@@ -23,7 +29,7 @@ async function appendFisheriesData(items) {
   if (!sheets) await load();
 
   const response = await sheets.spreadsheets.values.append({
-    spreadsheetId: spreadsheetId,
+    spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
     range: 'Fisheries',
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
@@ -39,7 +45,7 @@ async function appendBeachCleanData(items) {
   if (!sheets) await load();
 
   const response = await sheets.spreadsheets.values.append({
-    spreadsheetId: spreadsheetId,
+    spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
     range: 'Beach Clean',
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
