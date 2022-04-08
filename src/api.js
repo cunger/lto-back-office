@@ -1,5 +1,6 @@
 require('dotenv').config();
-const API_KEY = process.env.LTO_BACK_OFFICE_API_KEY;
+const HEADER_KEY = process.env.BACKOFFICE_HEADER_NAME;
+const HEADER_VAL = process.env.BACKOFFICE_HEADER_VALUE;
 
 const uploader = require('./uploader');
 const serverless = require('serverless-http');
@@ -14,8 +15,8 @@ router.get('/ping', (request, response) => {
 });
 
 router.post('/data', async (request, response) => {
-  if (!request.headers['x-auth-token']) return response.sendStatus(401);
-  if (request.headers['x-auth-token'] !== API_KEY) return response.sendStatus(401);
+  if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
+  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
 
   try {
     const items = request.body.items;
