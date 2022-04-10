@@ -14,6 +14,19 @@ router.get('/ping', (request, response) => {
   return response.send('pong');
 });
 
+router.post('/photo', async (request, response) => {
+  if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
+  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
+
+  try {
+    const link = await uploader.uploadPhoto(request.file);
+
+    return response.status(200).text(link);
+  } catch (_error) {
+    return response.sendStatus(500);
+  }
+});
+
 router.post('/data', async (request, response) => {
   if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);

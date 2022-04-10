@@ -1,14 +1,26 @@
 const GoogleSheets = require('./google-sheets');
+const GoogleDrive = require('./google-drive');
+
+async function uploadPhoto(file) {
+  let result = { link: undefined, errors: [] };
+  let response;
+
+  try {
+    response = await GoogleDrive.uploadPhoto(file);
+
+    if (response.status == 200) {
+      result.link
+    }
+  } catch (error) {
+    result.errors.push(`${error}`);
+  }
+
+  return result;
+}
 
 async function upload(items) {
   let result = { uploaded: [], errors: [] };
-
-  // First, get image data and upload images to Google Drive.
-  // Replace images by link.
-  // TODO
-
-  // Then append rows to Google Sheet.
-
+  
   const catches = items.filter(item => item.type == 'Catch');
   const trashes = items.filter(item => item.type == 'Trash');
 
@@ -37,8 +49,4 @@ async function upload(items) {
   return result;
 }
 
-async function uploadPicture(image) {
-
-}
-
-module.exports = { upload };
+module.exports = { upload, uploadPhoto };
