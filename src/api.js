@@ -22,7 +22,8 @@ router.post('/photo', async (request, response) => {
     const link = await uploader.uploadPhoto(request.file);
 
     return response.status(200).text(link);
-  } catch (_error) {
+  } catch (error) {
+    console.log(`[ERROR: /photo] ${error}`);
     return response.sendStatus(500);
   }
 });
@@ -38,7 +39,8 @@ router.post('/data', async (request, response) => {
     const result = await uploader.upload(items);
 
     return response.status(200).json(result);
-  } catch (_error) {
+  } catch (error) {
+    console.log(`[ERROR: /data] ${error}`);
     return response.sendStatus(500);
   }
 });

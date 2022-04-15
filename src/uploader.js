@@ -12,6 +12,7 @@ async function uploadPhoto(file) {
       result.link
     }
   } catch (error) {
+    console.log(`[ERROR: GoogleDrive.uploadPhoto] ${error}`);
     result.errors.push(`${error}`);
   }
 
@@ -20,7 +21,7 @@ async function uploadPhoto(file) {
 
 async function upload(items) {
   let result = { uploaded: [], errors: [] };
-  
+
   const catches = items.filter(item => item.type == 'Catch');
   const trashes = items.filter(item => item.type == 'Trash');
 
@@ -33,6 +34,7 @@ async function upload(items) {
       for (item of catches) result.uploaded.push(item.id);
     }
   } catch (error) {
+    console.log(`[ERROR: GoogleSheets.appendFisheriesData] ${error}`);
     result.errors.push(`${error}`);
   }
 
@@ -43,6 +45,7 @@ async function upload(items) {
       for (item of trashes) result.uploaded.push(item.id);
     }
   } catch (error) {
+    console.log(`[ERROR: GoogleSheets.appendBeachCleanData] ${error}`);
     result.errors.push(`${error}`);
   }
 
