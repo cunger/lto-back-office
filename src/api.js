@@ -21,7 +21,7 @@ router.post('/photo', async (request, response) => {
   try {
     const link = await uploader.uploadPhoto(request.file);
 
-    return response.status(200).text(link);
+    return response.status(200).send(link);
   } catch (error) {
     console.log(`[ERROR: /photo] ${error}`);
     return response.sendStatus(500);
