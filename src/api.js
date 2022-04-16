@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 const multer = require('multer');
-const upload = multer({ dest: 'photo/' });
+const upload = multer({ dest: 'photo/', storage: multer.memoryStorage() });
 
 const router = express.Router();
 
