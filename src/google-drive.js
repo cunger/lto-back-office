@@ -20,7 +20,7 @@ async function uploadPhoto(file) {
 
   const response = await drive.files.create({
      media: {
-       mimeType: file.type,
+       mimeType: 'image/jpeg',
        body: bufferToStream(file.buffer)
      },
      resource: {
