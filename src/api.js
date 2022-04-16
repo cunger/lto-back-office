@@ -8,18 +8,21 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
+const multer = require('multer');
+const upload = multer({ dest: 'photo/' });
+
 const router = express.Router();
 
 router.get('/ping', (request, response) => {
   return response.send('pong');
 });
 
-router.post('/photo', async (request, response) => {
+router.post('/photo', upload.single('file'), async (request, response) => {
   if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
 
   try {
-    const link = await uploader.uploadPhoto(request.body.file);
+    const link = await uploader.uploadPhoto(request.file);
 
     return response.status(200).send(link);
   } catch (error) {
