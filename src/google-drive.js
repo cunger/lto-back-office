@@ -32,4 +32,12 @@ async function uploadPhoto(file) {
    return response;
 }
 
+const Readable = require('stream').Readable;
+function bufferToStream(buffer) {
+  let stream = new Readable();
+  stream.push(buffer);
+  stream.push(null);
+  return stream;
+}
+
 module.exports = { uploadPhoto };
