@@ -24,7 +24,8 @@ async function uploadPhoto(file) {
        body: bufferToStream(file.buffer)
      },
      resource: {
-       name: file.name
+       name: file.name,
+       parents: ['1nSSn0l5vib7t3pQNuC9PHWpzAaaYbvpv']
      },
      fields: 'id'
    });
