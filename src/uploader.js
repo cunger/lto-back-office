@@ -9,7 +9,7 @@ async function uploadPhoto(file) {
     response = await GoogleDrive.uploadPhoto(file);
 
     if (response.status == 200) {
-      result.link
+      result.link = `https://drive.google.com/file/d/${response.id}`;
     }
   } catch (error) {
     console.log(`[ERROR: GoogleDrive.uploadPhoto] ${error}`);
