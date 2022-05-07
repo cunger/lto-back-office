@@ -15,16 +15,16 @@ async function load() {
   drive = google.drive({ version: 'v3', auth });
 }
 
-async function uploadPhoto(file) {
+async function uploadPhoto(filename, file) {
   if (!drive) await load();
 
   const response = await drive.files.create({
      media: {
        mimeType: 'image/jpeg',
-       body: bufferToStream(file.buffer)
+       body: file
      },
      resource: {
-       name: file.name,
+       name: filename,
        parents: ['1nSSn0l5vib7t3pQNuC9PHWpzAaaYbvpv']
      },
      fields: 'id'

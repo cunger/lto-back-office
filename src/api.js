@@ -19,12 +19,13 @@ router.get('/ping', (request, response) => {
 
 router.post('/photo', upload.single('file'), async (request, response) => {
   console.log('Incoming /photo...');
+  console.log(request.params.filename);
   if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
   console.log('Authorized. Proceeding...');
-  
+
   try {
-    const link = await uploader.uploadPhoto(request.file);
+    const link = await uploader.uploadPhoto(request.params.filename, request.file);
 
     console.log(link);
 
