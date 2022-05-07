@@ -15,13 +15,13 @@ async function load() {
   drive = google.drive({ version: 'v3', auth });
 }
 
-async function uploadPhoto(filename, file) {
+async function uploadPhoto(filename, filedata) {
   if (!drive) await load();
 
   const response = await drive.files.create({
      media: {
        mimeType: 'image/jpeg',
-       body: file
+       body: toStream(filedata)
      },
      resource: {
        name: filename,
@@ -34,9 +34,9 @@ async function uploadPhoto(filename, file) {
 }
 
 const Readable = require('stream').Readable;
-function bufferToStream(buffer) {
+function toStream(base64) {
   let stream = new Readable();
-  stream.push(buffer);
+  stream.push(base64);
   stream.push(null);
   return stream;
 }
