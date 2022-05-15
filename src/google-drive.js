@@ -16,7 +16,7 @@ async function load() {
   drive = google.drive({ version: 'v3', auth });
 }
 
-async function uploadPhoto(file) {
+async function uploadPhoto(file, filename, mimetype) {
   if (!drive) await load();
 
   const stream = new PassThrough();
@@ -24,11 +24,11 @@ async function uploadPhoto(file) {
 
   const response = await drive.files.create({
      media: {
-       mimeType: file.mimetype,
+       mimeType: mimetype,
        body: stream
      },
      resource: {
-       name: file.filename,
+       name: filename,
        parents: ['1nSSn0l5vib7t3pQNuC9PHWpzAaaYbvpv']
      },
      fields: 'id'

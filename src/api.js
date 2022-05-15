@@ -9,7 +9,11 @@ const app = express();
 app.use(express.json());
 
 const multer = require('multer');
-const upload = multer({ dest: 'photo/', storage: multer.memoryStorage() });
+const upload = multer({ 
+  dest: 'photo/', 
+  storage: multer.memoryStorage(),
+  limits: { fieldSize: 10 * 1024 * 1024 }
+});
 
 const router = express.Router();
 
@@ -21,10 +25,12 @@ router.post('/photo', upload.single('file'), async (request, response) => {
   console.log('Incoming /photo...');
   if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
-  console.log('Authorized. Proceeding...');
 
+  console.log(JSON.stringify(body));
+  
   try {
-    const link = await uploader.uploadPhoto(request.file);
+    const link = await uploader.uploadPhoto(request.file, body.name, body.type);
+    
     return response.status(200).send(link);
   } catch (error) {
     console.log(`[ERROR: /photo] ${error}`);
@@ -33,6 +39,7 @@ router.post('/photo', upload.single('file'), async (request, response) => {
 });
 
 router.post('/data', async (request, response) => {
+  console.log('Incoming /data...');
   if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
 
