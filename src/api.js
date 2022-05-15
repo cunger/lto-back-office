@@ -28,6 +28,7 @@ router.post('/photo', upload.single('file'), async (request, response) => {
 
   console.log(request.headers);
   console.log(JSON.stringify(request.body));
+  console.log(request.file);
   
   try {
     const link = await uploader.uploadPhoto(request.file, request.body.name, request.body.type);
