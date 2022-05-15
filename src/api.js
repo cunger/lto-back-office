@@ -26,10 +26,11 @@ router.post('/photo', upload.single('file'), async (request, response) => {
   if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
 
-  console.log(JSON.stringify(body));
+  console.log(request.headers);
+  console.log(JSON.stringify(request.body));
   
   try {
-    const link = await uploader.uploadPhoto(request.file, body.name, body.type);
+    const link = await uploader.uploadPhoto(request.file, request.body.name, request.body.type);
     
     return response.status(200).send(link);
   } catch (error) {
