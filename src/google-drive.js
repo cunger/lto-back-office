@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { google } = require('googleapis');
+const { PassThrough } = require('stream');
 
 let drive;
 
@@ -18,13 +19,13 @@ async function load() {
 async function uploadPhoto(file) {
   if (!drive) await load();
 
-  const bufferStream = new stream.PassThrough();
-  bufferStream.end(file.buffer);
+  const stream = new PassThrough();
+  stream.end(file.buffer);
 
   const response = await drive.files.create({
      media: {
        mimeType: file.mimetype,
-       body: bufferStream
+       body: stream
      },
      resource: {
        name: file.filename,
