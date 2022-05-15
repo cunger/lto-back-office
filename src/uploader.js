@@ -9,9 +9,9 @@ async function uploadPhoto(filename, file) {
     response = await GoogleDrive.uploadPhoto(filename, file);
 
     if (response.status == 200) {
-      result.link = `https://drive.google.com/file/d/${response.id}`;
+      result.link = `https://drive.google.com/file/d/${response.data.id}`;
     } else {
-      console.log(`${response.status}`);
+      result.errors.push(`${response.status} ${response.statusMessage}`);
     }
   } catch (error) {
     console.log(`[ERROR: GoogleDrive.uploadPhoto] ${error}`);
@@ -33,7 +33,11 @@ async function upload(items) {
     response = await GoogleSheets.appendFisheriesData(catches);
 
     if (response.status == 200) {
-      for (item of catches) result.uploaded.push(item.id);
+      for (let item of catches) {
+        result.uploaded.push(item.id);
+      }
+    } else {
+      result.errors.push(`${response.status} ${response.statusMessage}`);
     }
   } catch (error) {
     console.log(`[ERROR: GoogleSheets.appendFisheriesData] ${error}`);
@@ -44,7 +48,11 @@ async function upload(items) {
     response = await GoogleSheets.appendBeachCleanData(trashes);
 
     if (response.status == 200) {
-      for (item of trashes) result.uploaded.push(item.id);
+      for (let item of trashes) {
+        result.uploaded.push(item.id);
+      }
+    } else {
+      result.errors.push(`${response.status} ${response.statusMessage}`);
     }
   } catch (error) {
     console.log(`[ERROR: GoogleSheets.appendBeachCleanData] ${error}`);

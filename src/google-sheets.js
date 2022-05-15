@@ -91,7 +91,7 @@ function asFisheriesRow(item) {
     item.wingspan,
     item.photos
       .map(image => image.link)
-      .filter(image => image)
+      .filter(url => !!url)
       .join(', ')
   ];
 }
