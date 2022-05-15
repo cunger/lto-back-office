@@ -89,7 +89,10 @@ function asFisheriesRow(item) {
     item.carapace_width,
     item.carapace_length,
     item.wingspan,
-    item.photos.map(image => image.link).filter(image => image)
+    item.photos
+      .map(image => image.link)
+      .filter(image => image)
+      .join(', ')
   ];
 }
 
