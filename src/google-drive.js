@@ -15,30 +15,25 @@ async function load() {
   drive = google.drive({ version: 'v3', auth });
 }
 
-async function uploadPhoto(filename, filedata) {
+async function uploadPhoto(file) {
   if (!drive) await load();
+
+  const bufferStream = new stream.PassThrough();
+  bufferStream.end(file.buffer);
 
   const response = await drive.files.create({
      media: {
-       mimeType: 'image/jpeg',
-       body: toStream(filedata)
+       mimeType: file.mimetype,
+       body: bufferStream
      },
      resource: {
-       name: filename,
+       name: file.filename,
        parents: ['1nSSn0l5vib7t3pQNuC9PHWpzAaaYbvpv']
      },
      fields: 'id'
    });
 
    return response;
-}
-
-const Readable = require('stream').Readable;
-function toStream(base64) {
-  let stream = new Readable();
-  stream.push(base64);
-  stream.push(null);
-  return stream;
 }
 
 module.exports = { uploadPhoto };
