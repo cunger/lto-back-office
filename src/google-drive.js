@@ -19,8 +19,6 @@ async function load() {
 async function uploadPhoto(file) {
   if (!drive) await load();
 
-  console.log(`Uploading ${file.originalname} (${file.mimetype})...`);
-
   const stream = new PassThrough();
   stream.end(file.buffer);
 
@@ -36,9 +34,7 @@ async function uploadPhoto(file) {
      fields: 'id'
    });
 
-   console.log(`Response: ${JSON.stringify(response)}`);
-
-   return response;
+   return `https://drive.google.com/file/d/${response.data.id}`;
 }
 
 module.exports = { uploadPhoto };
