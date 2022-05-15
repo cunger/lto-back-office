@@ -31,7 +31,7 @@ router.post('/photo', upload.single('file'), async (request, response) => {
   console.log(request.file);
   
   try {
-    const link = await uploader.uploadPhoto(request.file, request.body.name, request.body.type);
+    const link = await uploader.uploadPhoto(request.file);
     
     return response.status(200).send(link);
   } catch (error) {
