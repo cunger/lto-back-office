@@ -36,7 +36,7 @@ async function uploadPhoto(file) {
      fields: 'id'
    });
 
-   console.log(`Response: ${response}`);
+   console.log(`Response: ${JSON.stringify(response)}`);
 
    return response;
 }
