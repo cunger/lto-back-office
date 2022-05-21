@@ -9,8 +9,8 @@ const app = express();
 app.use(express.json());
 
 const multer = require('multer');
-const upload = multer({ 
-  dest: 'photo/', 
+const upload = multer({
+  dest: 'photo/',
   storage: multer.memoryStorage(),
   limits: { fieldSize: 10 * 1024 * 1024 }
 });
@@ -27,8 +27,10 @@ router.post('/photo', upload.single('file'), async (request, response) => {
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
 
   try {
+    console.log(request.file);
+    console.log(request.body);
     const link = await uploader.uploadPhoto(request.file);
-    
+
     return response.status(200).send(link);
   } catch (error) {
     console.log(`[ERROR: /photo] ${error}`);

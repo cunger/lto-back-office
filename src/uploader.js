@@ -1,12 +1,12 @@
 const GoogleSheets = require('./google-sheets');
 const GoogleDrive = require('./google-drive');
 
-async function uploadPhoto(filename, file) {
+async function uploadPhoto(file, filename) {
   let result = { link: undefined, errors: [] };
   let response;
 
   try {
-    response = await GoogleDrive.uploadPhoto(filename, file);
+    response = await GoogleDrive.uploadPhoto(file);
 
     if (response.status == 200) {
       result.link = `https://drive.google.com/file/d/${response.data.id}`;
