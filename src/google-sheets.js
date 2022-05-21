@@ -66,6 +66,10 @@ function asBeachCleanRow(item) {
 function asFisheriesRow(item) {
   item.signature = item.signature || {};
 
+  if (item.method === 'Other' && item.other_method && item.other_method !== '') {
+    item.method = item.other_method;
+  }
+
   return [
     item.signature.name || '',
     item.signature.email || '',
