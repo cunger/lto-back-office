@@ -3,10 +3,9 @@ const GoogleDrive = require('./google-drive');
 
 async function uploadPhoto(file) {
   let result = { link: undefined, errors: [] };
-  let response;
 
   try {
-    response = await GoogleDrive.uploadPhoto(file);
+    const response = await GoogleDrive.uploadPhoto(file);
 
     if (response.status == 200) {
       result.link = `https://drive.google.com/file/d/${response.data.id}`;

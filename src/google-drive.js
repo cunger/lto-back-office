@@ -34,9 +34,7 @@ async function uploadPhoto(file) {
      fields: 'id'
    });
 
-   console.log(response);
-
-   return `https://drive.google.com/file/d/${response.data.id}`;
+   return response;
 }
 
 module.exports = { uploadPhoto };
