@@ -30,7 +30,7 @@ router.post('/photo', upload.single('file'), async (request, response) => {
     return response.status(200).json(result);
   } catch (error) {
     console.log(`[ERROR: /photo] ${error}`);
-    return response.sendStatus(500);
+    return response.status(500).send(`${error}`);
   }
 });
 
