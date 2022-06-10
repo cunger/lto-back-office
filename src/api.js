@@ -29,8 +29,8 @@ router.post('/photo', upload.single('file'), async (request, response) => {
 
     return response.status(200).json(result);
   } catch (error) {
-    console.log(`[ERROR: /photo] ${JSON.stringify(error)}`);
-    return response.status(500).send(JSON.stringify(error));
+    console.log(`[ERROR: /photo] ${error}`);
+    return response.status(500).json({ errors: `${error}` });
   }
 });
 
@@ -44,11 +44,12 @@ router.post('/data', async (request, response) => {
     if (!items) return response.sendStatus(400);
 
     const result = await uploader.upload(items);
+    console.log(result);
 
     return response.status(200).json(result);
   } catch (error) {
     console.log(`[ERROR: /data] ${error}`);
-    return response.sendStatus(500);
+    return response.status(500).json({ errors: `${error}` });
   }
 });
 
