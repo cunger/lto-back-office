@@ -93,6 +93,7 @@ function asFisheriesRow(item) {
     item.carapace_width,
     item.carapace_length,
     item.wingspan,
+    item.photosNote + '\n' + 
     item.photos
       .map(image => image.link)
       .filter(url => !!url)
