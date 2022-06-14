@@ -85,6 +85,8 @@ function asFisheriesRow(item) {
     item.common_name,
     item.sex,
     item.length,
+    item.min_length,
+    item.max_length,
     item.weight,
     item.fork_length,
     item.tail_length,
