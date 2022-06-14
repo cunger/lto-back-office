@@ -59,7 +59,8 @@ function asBeachCleanRow(item) {
     item.date,
     item.location,
     item.category,
-    item.quantity
+    item.quantity,
+    item.additionalNotes
   ];
 }
 
@@ -97,7 +98,8 @@ function asFisheriesRow(item) {
     item.photos
       .map(image => image.link)
       .filter(url => !!url)
-      .join(', ')
+      .join(', '),
+    item.additionalNotes
   ];
 }
 
