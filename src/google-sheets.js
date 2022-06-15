@@ -113,7 +113,16 @@ function printDimension(dimension) {
   if (dimension.total.length > 0) {
     str = dimension.total;
   } else {
-    str = `${dimension.min} ... ${dimension.max}`;
+    let rightOrder = true;
+    try {
+      rightOrder = parseInt(dimension.min) <= parseInt(dimension.max);
+    } catch (error) {
+    }
+    if (rightOrder) {
+      str = `${dimension.min} ... ${dimension.max}`;
+    } else {
+      str = `${dimension.max} ... ${dimension.min}`;
+    }
   }
   str = str.trim();
   if (str === '...') {
