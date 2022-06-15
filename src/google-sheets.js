@@ -91,8 +91,8 @@ function asFisheriesRow(item) {
     printDimension(item.head_length),
     printDimension(item.head_width),
     printDimension(item.precaudal_length),
-    printDimension(item.carapace_width),
     printDimension(item.carapace_length),
+    printDimension(item.carapace_width),
     printDimension(item.wingspan),
     item.photosNote + '\n' + 
     item.photos
