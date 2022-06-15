@@ -84,18 +84,16 @@ function asFisheriesRow(item) {
     item.species,
     item.common_name,
     item.sex,
-    item.length,
-    item.min_length,
-    item.max_length,
-    item.weight,
-    item.fork_length,
-    item.tail_length,
-    item.head_length,
-    item.head_width,
-    item.precaudal_length,
-    item.carapace_width,
-    item.carapace_length,
-    item.wingspan,
+    printDimension(item.length),
+    printDimension(item.weight),
+    printDimension(item.fork_length),
+    printDimension(item.tail_length),
+    printDimension(item.head_length),
+    printDimension(item.head_width),
+    printDimension(item.precaudal_length),
+    printDimension(item.carapace_width),
+    printDimension(item.carapace_length),
+    printDimension(item.wingspan),
     item.photosNote + '\n' + 
     item.photos
       .map(image => image.link)
@@ -103,6 +101,25 @@ function asFisheriesRow(item) {
       .join(', '),
     item.additionalNotes
   ];
+}
+
+function printDimension(dimension) {
+  // old items
+  if (typeof(dimension) === 'string') {
+    return dimension;
+  }
+  // new items
+  let str;
+  if (dimension.total.length > 0) {
+    str = dimension.total;
+  } else {
+    str = `${dimension.min} ... ${dimension.max}`;
+  }
+  str = str.trim();
+  if (str === '...') {
+    str = '';
+  }
+  return str;
 }
 
 module.exports = { appendFisheriesData, appendBeachCleanData };
