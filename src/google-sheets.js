@@ -85,7 +85,6 @@ function asFisheriesRow(item) {
     item.common_name,
     item.sex,
     printDimension(item.length),
-    printDimension(item.weight),
     printDimension(item.fork_length),
     printDimension(item.tail_length),
     printDimension(item.head_length),
@@ -93,7 +92,7 @@ function asFisheriesRow(item) {
     printDimension(item.precaudal_length),
     printDimension(item.carapace_length),
     printDimension(item.carapace_width),
-    printDimension(item.wingspan),
+    printDimension(item.disk_width),
     item.photosNote + '\n' + 
     item.photos
       .map(image => image.link)
