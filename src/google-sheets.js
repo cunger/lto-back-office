@@ -66,6 +66,7 @@ function asBeachCleanRow(item) {
 
 function asFisheriesRow(item) {
   item.signature = item.signature || {};
+  item.photos = item.photos || [];
 
   if (item.method === 'Other' && item.other_method && item.other_method !== '') {
     item.method = item.other_method;
@@ -97,7 +98,7 @@ function asFisheriesRow(item) {
     item.photos
       .map(image => image.link)
       .filter(url => !!url)
-      .join(', '),
+      .join('\n'),
     item.additionalNotes
   ];
 }
