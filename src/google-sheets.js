@@ -20,13 +20,12 @@ async function appendFisheriesData(items) {
 
   const response = await sheets.spreadsheets.values.append({
     spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-    range: 'Fisheries!A:W',
+    range: 'Fisheries',
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     resource: {
       values: items.map(item => asFisheriesRow(item)),
-      range: 'Fisheries!A:W',
-      majorDimension: 'ROWS'
+      startColumnIndex: 0
     }
   });
 
@@ -42,7 +41,8 @@ async function appendBeachCleanData(items) {
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     resource: {
-      values: items.map(item => asBeachCleanRow(item))
+      values: items.map(item => asBeachCleanRow(item)),
+      startColumnIndex: 0
     }
   });
 
