@@ -24,8 +24,7 @@ async function appendFisheriesData(items) {
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     resource: {
-      values: items.map(item => asFisheriesRow(item)),
-      startColumnIndex: 0
+      values: items.map(item => asFisheriesRow(item))
     }
   });
 
@@ -41,8 +40,7 @@ async function appendBeachCleanData(items) {
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     resource: {
-      values: items.map(item => asBeachCleanRow(item)),
-      startColumnIndex: 0
+      values: items.map(item => asBeachCleanRow(item))
     }
   });
 
