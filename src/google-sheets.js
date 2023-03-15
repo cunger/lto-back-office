@@ -24,8 +24,7 @@ async function appendFisheriesData(items) {
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     resource: {
-      values: items.map(item => asFisheriesRow(item)),
-      range: 'Fisheries!A:W'
+      values: items.map(item => asFisheriesRow(item))
     }
   });
 
