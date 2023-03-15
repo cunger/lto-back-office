@@ -24,9 +24,8 @@ async function appendFisheriesData(items) {
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     resource: {
-      values: [
-        items.map(item => asFisheriesRow(item))
-      ]
+      values: items.map(item => asFisheriesRow(item)),
+      range: 'Fisheries!A:W'
     }
   });
 
@@ -38,7 +37,7 @@ async function appendBeachCleanData(items) {
 
   const response = await sheets.spreadsheets.values.append({
     spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-    range: 'Beach Clean',
+    range: 'Beach Clean!A:H',
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     resource: {
