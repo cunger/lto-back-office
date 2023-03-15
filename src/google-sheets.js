@@ -20,11 +20,13 @@ async function appendFisheriesData(items) {
 
   const response = await sheets.spreadsheets.values.append({
     spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-    range: 'Fisheries!A:W',
+    range: 'Fisheries',
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     resource: {
-      values: items.map(item => asFisheriesRow(item))
+      values: items.map(item => asFisheriesRow(item)),
+      range: 'A:W',
+      majorDimension: 'ROWS'
     }
   });
 
