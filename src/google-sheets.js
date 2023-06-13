@@ -119,9 +119,12 @@ function printDimension(dimension) {
     } catch (error) {
     }
     if (rightOrder) {
-      str = `${dimension.min} ... ${dimension.max} (avg: ${dimension.avg || '-'})`;
+      str = `${dimension.min} ... ${dimension.max}`;
     } else {
-      str = `${dimension.max} ... ${dimension.min} (avg: ${dimension.avg || '-'})`;
+      str = `${dimension.max} ... ${dimension.min}`;
+    }
+    if (dimension.avg.length > 0) {
+      str = `${str} (avg: ${dimension.avg})`;
     }
   }
   str = str.trim();
