@@ -99,6 +99,10 @@ function asFisheriesRow(item) {
         .filter(url => !!url)
         .join('\n')
     ).trim(),
+    item.photos
+        .map(image => image.filename)
+        .filter(name => !!name)
+        .join('\n'),
     item.additionalNotes
   ];
 }
