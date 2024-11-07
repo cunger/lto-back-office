@@ -6,8 +6,6 @@ async function uploadPhoto(file) {
 
   try {
     const response = await GoogleDrive.uploadPhoto(file);
-    console.log(response.status);
-    console.log(JSON.stringify(response));
 
     if (response.status === 200) {
       result.link = `https://drive.google.com/file/d/${response.data.id}`;

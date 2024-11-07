@@ -19,12 +19,10 @@ router.get('/ping', (request, response) => {
 
 router.post('/photo', middleware.single('file'), async (request, response) => {
   console.log('Incoming /photo...');
-  console.log(request.headers);
 
   if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
 
-  console.log(request.file);
   try {
     const result = await uploader.uploadPhoto(request.file);
     console.log(result);
