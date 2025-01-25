@@ -76,9 +76,9 @@ function asBeachCleanRow(item) {
     item.signature.email || '',
     item.signature.token || '',
     new Date(parseInt(item.date)).toUTCString(),
-    item.location,
-    item.category,
-    item.quantity,
+    item.location || '',
+    item.category || '',
+    item.quantity || '',
     item.additionalNotes || '',
     `Uploaded from app on ${new Date().toUTCString()})`, 
   ];
@@ -97,14 +97,14 @@ function asFisheriesRow(item) {
     item.signature.email || '',
     item.signature.token || '',
     new Date(parseInt(item.date)).toUTCString(),
-    item.location,
-    item.method,
-    item.base,
-    item.reason,
-    item.quantity,
-    item.species,
-    item.common_name,
-    item.sex,
+    item.location || '',
+    item.method || '',
+    item.base || '',
+    item.reason || '',
+    item.quantity || '',
+    item.species || '',
+    item.common_name || '',
+    item.sex || '',
     printDimension(item.length),
     printDimension(item.fork_length),
     printDimension(item.tail_length),
@@ -125,7 +125,8 @@ function asFisheriesRow(item) {
         .map(image => image.filename)
         .filter(name => !!name)
         .join('\n'),
-    item.additionalNotes
+    item.additionalNotes || '',
+    `Uploaded from app on ${new Date().toUTCString()})`,
   ];
 }
 
