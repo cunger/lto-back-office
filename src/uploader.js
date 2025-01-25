@@ -31,12 +31,12 @@ async function upload(items) {
   try {
     response = await SharePoint.appendFisheriesData(catches);
     
-    if (response.status == 200) {
+    if (!response.error) {
       for (let item of catches) {
         result.uploaded.push(item.id);
       }
     } else {
-      result.errors.push(`${response.status} ${response.statusMessage}`);
+      result.errors.push(`${response.error}`);
     }
   } catch (error) {
     console.log(`[ERROR: GoogleSheets.appendFisheriesData] ${error}`);
@@ -46,12 +46,12 @@ async function upload(items) {
   try {
     response = await SharePoint.appendBeachCleanData(trashes);
 
-    if (response.status == 200) {
+    if (!response.error) {
       for (let item of trashes) {
         result.uploaded.push(item.id);
       }
     } else {
-      result.errors.push(`${response.status} ${response.statusMessage}`);
+      result.errors.push(`${response.error}`);
     }
   } catch (error) {
     console.log(`[ERROR: GoogleSheets.appendBeachCleanData] ${error}`);

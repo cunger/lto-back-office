@@ -38,6 +38,10 @@ const fisheriesUrl = `${worksheetsUrl}/Fisheries/tables/Table2/rows/add`;
 
 async function appendFisheriesData(items) {
     if (client === undefined) load();
+    if (items.length === 0) {
+      console.log('No fisheries data to upload.');
+      return Promise.resolve({ values: [] });
+    }
 
     const body = JSON.stringify({
       values: items.map(item => asFisheriesRow(item))
@@ -45,15 +49,19 @@ async function appendFisheriesData(items) {
     console.log(`Uploading: ${body}`);
 
     try {
-      await client.api(fisheriesUrl).post(body);
+      return await client.api(fisheriesUrl).post(body);
     } catch (error) {
       console.log(error);
-      console.log(`Failed to log fisheries data:\n${body}`);
+      return Promise.resolve({ values: [], error: error });
     }
 }
 
 async function appendBeachCleanData(items) {
     if (client === undefined) load();
+    if (items.length === 0) {
+      console.log('No beach clean data to upload.');
+      return Promise.resolve({ values: [] });
+    }
 
     const body = JSON.stringify({
       values: items.map(item => asBeachCleanRow(item)),
@@ -61,10 +69,10 @@ async function appendBeachCleanData(items) {
     console.log(`Uploading: ${body}`);
 
     try {
-      await client.api(beachCleanUrl).post(body);
+      return await client.api(beachCleanUrl).post(body);
     } catch (error) {
       console.log(error);
-      console.log(`Failed to log beach clean data:\n${body}`);
+      return Promise.resolve({ values: [], error: error });
     }
 }
 
