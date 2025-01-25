@@ -30,7 +30,7 @@ function load() {
   }
 }
 
-const worksheetsUrl = 'https://graph.microsoft.com/v1.0/sites/7874ceee-6190-4058-a26a-96dfb2ad1017/lists/d4bcfb42-63c8-4148-8842-497c7b41389f/items/1/driveitem/workbook/worksheets';
+const worksheetsUrl = `https://graph.microsoft.com/v1.0/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_LIST_ID}/items/1/driveitem/workbook/worksheets`;
 const beachCleanUrl = `${worksheetsUrl}/BeachClean/tables/Table1/rows/add`;
 const fisheriesUrl = `${worksheetsUrl}/Fisheries/tables/Table2/rows/add`;
 // Create a table by calling:
