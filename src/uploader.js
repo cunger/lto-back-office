@@ -1,13 +1,11 @@
-const GoogleSheets = require('./google-sheets');
 const GoogleDrive = require('./google-drive');
+const SharePoint = require('./microsoft-sharepoint');
 
 async function uploadPhoto(file) {
   let result = { link: undefined, errors: [] };
 
   try {
     const response = await GoogleDrive.uploadPhoto(file);
-    console.log(response.status);
-    console.log(JSON.stringify(response));
 
     if (response.status === 200) {
       result.link = `https://drive.google.com/file/d/${response.data.id}`;
@@ -31,8 +29,8 @@ async function upload(items) {
   let response;
 
   try {
-    response = await GoogleSheets.appendFisheriesData(catches);
-
+    response = await SharePoint.appendFisheriesData(catches);
+    
     if (response.status == 200) {
       for (let item of catches) {
         result.uploaded.push(item.id);
@@ -46,7 +44,7 @@ async function upload(items) {
   }
 
   try {
-    response = await GoogleSheets.appendBeachCleanData(trashes);
+    response = await SharePoint.appendBeachCleanData(trashes);
 
     if (response.status == 200) {
       for (let item of trashes) {

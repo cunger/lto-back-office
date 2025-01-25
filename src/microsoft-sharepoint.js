@@ -1,51 +1,71 @@
 require('dotenv').config();
 
-const { google } = require('googleapis');
+const { Client } = require('@microsoft/microsoft-graph-client');
+const { ClientSecretCredential } = require('@azure/identity');
+const { TokenCredentialAuthenticationProvider } = require('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
 
-let sheets;
+let authProvider;
+let client;
 
-async function load() {
-  const auth = await new google.auth.GoogleAuth({
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    credentials: {
-      client_email: process.env.GOOGLE_CLIENT_EMAIL,
-      private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n')
-    },
-  }).getClient();
+function load() {
+  try {
+    console.log("Trying to authenticate...");
+    authProvider = new TokenCredentialAuthenticationProvider(
+      new ClientSecretCredential(
+        process.env.AZURE_TENANT_ID,
+        process.env.AZURE_CLIENT_ID,
+        process.env.AZURE_CLIENT_SECRET
+      ),
+      { 
+        scopes: ['https://graph.microsoft.com/.default']
+      }
+    );
 
-  sheets = google.sheets({ version: 'v4', auth });
+    client = Client.initWithMiddleware({
+      debugLogging: true,
+      authProvider: authProvider,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
+const worksheetsUrl = `https://graph.microsoft.com/v1.0/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_LIST_ID}/items/1/driveitem/workbook/worksheets`;
+const beachCleanUrl = `${worksheetsUrl}/BeachClean/tables/Table1/rows/add`;
+const fisheriesUrl = `${worksheetsUrl}/Fisheries/tables/Table2/rows/add`;
+// Create a table by calling:
+// await client.api(`${worksheetsUrl}/Fisheries/tables/add`).post({ address: "A1:Y1", hasHeaders: true });
+
 async function appendFisheriesData(items) {
-  if (!sheets) await load();
+    if (client === undefined) load();
 
-  const response = await sheets.spreadsheets.values.append({
-    spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-    range: 'Fisheries!A:W',
-    valueInputOption: 'RAW',
-    insertDataOption: 'INSERT_ROWS',
-    resource: {
+    const body = JSON.stringify({
       values: items.map(item => asFisheriesRow(item))
-    }
-  });
+    });
+    console.log(`Uploading: ${body}`);
 
-  return response;
+    try {
+      await client.api(fisheriesUrl).post(body);
+    } catch (error) {
+      console.log(error);
+      console.log(`Failed to log fisheries data:\n${body}`);
+    }
 }
 
 async function appendBeachCleanData(items) {
-  if (!sheets) await load();
+    if (client === undefined) load();
 
-  const response = await sheets.spreadsheets.values.append({
-    spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-    range: 'Beach Clean!A:H',
-    valueInputOption: 'RAW',
-    insertDataOption: 'INSERT_ROWS',
-    resource: {
-      values: items.map(item => asBeachCleanRow(item))
+    const body = JSON.stringify({
+      values: items.map(item => asBeachCleanRow(item)),
+    });
+    console.log(`Uploading: ${body}`);
+
+    try {
+      await client.api(beachCleanUrl).post(body);
+    } catch (error) {
+      console.log(error);
+      console.log(`Failed to log beach clean data:\n${body}`);
     }
-  });
-
-  return response;
 }
 
 function asBeachCleanRow(item) {
@@ -55,11 +75,12 @@ function asBeachCleanRow(item) {
     item.signature.name || '',
     item.signature.email || '',
     item.signature.token || '',
-    item.date,
+    new Date(parseInt(item.date)).toUTCString(),
     item.location,
     item.category,
     item.quantity,
-    item.additionalNotes
+    item.additionalNotes || '',
+    `Uploaded from app on ${new Date().toUTCString()})`, 
   ];
 }
 
@@ -75,7 +96,7 @@ function asFisheriesRow(item) {
     item.signature.name || '',
     item.signature.email || '',
     item.signature.token || '',
-    item.date,
+    new Date(parseInt(item.date)).toUTCString(),
     item.location,
     item.method,
     item.base,
