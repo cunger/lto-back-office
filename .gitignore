@@ -3,3 +3,8 @@ test.sh
 credentials.json
 package-lock.json
 node_modules/
+
+# Local Netlify folder
+.netlify
+.expo
+.vscode

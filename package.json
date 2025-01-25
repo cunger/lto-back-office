@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node local-server.js",
-    "build": "netlify-lambda build src"
+    "build": ""
   },
   "author": "andrea.christina.unger@gmail.com",
   "license": "MIT",
@@ -23,7 +23,6 @@
     "googleapis": "^99.0.0",
     "install": "^0.13.0",
     "multer": "^1.4.4",
-    "netlify-lambda": "^2.0.15",
     "npm": "^10.9.0",
     "serverless-http": "^2.7.0"
   }
