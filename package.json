@@ -14,13 +14,17 @@
     "url": "git+https://github.com/cunger/lto-back-office.git"
   },
   "dependencies": {
+    "@azure/identity": "^4.5.0",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
     "dotenv": "^16.0.0",
     "encoding": "^0.1.13",
     "express": "^4.17.3",
     "fs": "^0.0.1-security",
     "googleapis": "^99.0.0",
+    "install": "^0.13.0",
     "multer": "^1.4.4",
     "netlify-lambda": "^2.0.15",
+    "npm": "^10.9.0",
     "serverless-http": "^2.7.0"
   }
 }
