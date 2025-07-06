@@ -83,12 +83,12 @@ function asBeachCleanRow(item) {
     item.signature.name || '',
     item.signature.email || '',
     item.signature.token || '',
-    new Date(parseInt(item.date)).toUTCString(),
+    item.date || '',
     item.location || '',
     item.category || '',
     item.quantity || '',
     item.additionalNotes || '',
-    `Uploaded from app on ${new Date().toUTCString()})`, 
+    `Uploaded from app on ${new Date().toISOString()})`,
   ];
 }
 
@@ -104,7 +104,7 @@ function asFisheriesRow(item) {
     item.signature.name || '',
     item.signature.email || '',
     item.signature.token || '',
-    new Date(parseInt(item.date)).toUTCString(),
+    item.date || '',
     item.location || '',
     item.method || '',
     item.base || '',
@@ -134,7 +134,7 @@ function asFisheriesRow(item) {
         .filter(name => !!name)
         .join('\n'),
     item.additionalNotes || '',
-    `Uploaded from app on ${new Date().toUTCString()})`,
+    `Uploaded from app on ${new Date().toISOString()})`,
   ];
 }
 
