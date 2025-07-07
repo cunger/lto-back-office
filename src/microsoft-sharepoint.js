@@ -3,6 +3,7 @@ require('dotenv').config();
 const { Client } = require('@microsoft/microsoft-graph-client');
 const { ClientSecretCredential } = require('@azure/identity');
 const { TokenCredentialAuthenticationProvider } = require('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
+const { TimeoutHandler } = require('@microsoft/microsoft-graph-client/lib/middleware/options/TimeoutHandler');
 const { PassThrough } = require('stream');
 
 let authProvider;
@@ -47,8 +48,10 @@ async function uploadPhoto(file) {
   const stream = new PassThrough();
   stream.end(file.buffer);
 
-  const response = await client.api(photosUrl(file.originalname))
+  const response = await client
+    .api(photosUrl(file.originalname))
     .header("Content-Type", "image/jpeg")
+    .middlewareOptions(new TimeoutHandler(300_000)) // 5 minutes
     .put(stream);
   console.log(response);
 
