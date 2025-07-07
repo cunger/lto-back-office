@@ -38,8 +38,8 @@ const worksheetsUrl = `https://graph.microsoft.com/v1.0/sites/${process.env.SHAR
 const beachCleanUrl = `${worksheetsUrl}/BeachClean/tables/Table1/rows/add`;
 const fisheriesUrl = `${worksheetsUrl}/Fisheries/tables/Table2/rows/add`;
 
-// One drive folder for the photos
-const photosUrl = `https://graph.microsoft.com/v1.0/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_LIST_ID}/items/2/attachments`;
+// OneDrive folder for the photos
+const photosUrl = (filename) => `https://graph.microsoft.com/v1.0/drives/${process.env.SHAREPOINT_DRIVE_ID}/root:/AppUploads/${filename}:/content/2/attachments`;
 
 async function uploadPhoto(file) {
   if (client === undefined) load();
@@ -47,10 +47,9 @@ async function uploadPhoto(file) {
   const stream = new PassThrough();
   stream.end(file.buffer);
 
-  const response = await client.api(photosUrl).put({
-    "name": file.originalname,
-    "contentBytes": stream,
-  });
+  const response = await client.api(photosUrl(file.originalname))
+    .header("Content-Type", "image/jpg")
+    .put(stream);
   console.log(response);
 
   return response;
