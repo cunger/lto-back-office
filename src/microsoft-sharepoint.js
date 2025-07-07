@@ -43,10 +43,7 @@ const photosUrl = (filename) => `https://graph.microsoft.com/v1.0/drives/${proce
 async function uploadPhoto(file) {
   if (client === undefined) load();
 
-  console.log("Uploading photo...");
-
-  const stream = new PassThrough();
-  stream.end(file.buffer);
+  console.log("Uploading photo with " + (typeof file.buffer) + " buffer length of " + Buffer.byteLength(file.buffer));
 
   // Set a 5 minutes timeout
   const controller = new AbortController();
@@ -62,7 +59,7 @@ async function uploadPhoto(file) {
     const uploadPromise = client
       .api(photosUrl(file.originalname))
       .header("Content-Type", "image/jpeg")
-      .put(stream, { signal: controller.signal });
+      .put(file.buffer, { signal: controller.signal });
 
     return await Promise.race([uploadPromise, timeoutPromise]);
   } catch (err) {
