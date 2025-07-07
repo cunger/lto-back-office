@@ -46,24 +46,26 @@ const photosUrl = (filename) => `https://graph.microsoft.com/v1.0/drives/${proce
 async function uploadPhoto(file) {
   if (client === undefined) load();
 
+  console.log("Uploading photo...");
+
   const stream = new PassThrough();
   stream.end(file.buffer);
 
-  const timeout = setTimeout(() => { controller.abort(); }, 5 * 60_000);
+  // Set a 5 minutes timeout
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      console.log("Aborting...");
+      controller.abort();
+      reject(new Error("⏱️ Request timed out after 5 minutes"));
+    }, 5 * 60_000);
+  });
 
   try {
-    const response = await client.api(photosUrl(file.originalname)).header("Content-Type", "image/jpeg").put(stream);
-    console.log(response);
-    return response;
+    const uploadPromise = client.api(photosUrl(file.originalname)).header("Content-Type", "image/jpeg").put(stream);
+
+    return await Promise.race([uploadPromise, timeoutPromise]);
   } catch (err) {
-    if (err.name === "AbortError") {
-      console.error("⏱️ Request timed out after 5 minutes");
-    } else {
-      console.log(err);
-    }
-  } finally {
-    clearTimeout(timeout);
-    return Promise.reject();
+    return Promise.reject(err);
   }
 }
 
