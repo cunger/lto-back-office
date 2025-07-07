@@ -7,11 +7,11 @@ const { PassThrough } = require('stream');
 
 let authProvider;
 let client;
-let controller;
 
 function load() {
+  console.log("Loading client...");
+
   try {
-    console.log("Trying to authenticate...");
     authProvider = new TokenCredentialAuthenticationProvider(
       new ClientSecretCredential(
         process.env.AZURE_TENANT_ID,
@@ -23,10 +23,7 @@ function load() {
       }
     );
 
-    controller = new AbortController();
-
     client = Client.initWithMiddleware({
-      fetchOptions: { signal: controller.signal },
       debugLogging: true,
       authProvider: authProvider,
     });
@@ -52,16 +49,20 @@ async function uploadPhoto(file) {
   stream.end(file.buffer);
 
   // Set a 5 minutes timeout
+  const controller = new AbortController();
   const timeoutPromise = new Promise((_, reject) => {
     setTimeout(() => {
       console.log("Aborting...");
       controller.abort();
-      reject(new Error("⏱️ Request timed out after 5 minutes"));
+      reject(new Error("Request timed out after 5 minutes"));
     }, 5 * 60_000);
   });
 
   try {
-    const uploadPromise = client.api(photosUrl(file.originalname)).header("Content-Type", "image/jpeg").put(stream);
+    const uploadPromise = client
+      .api(photosUrl(file.originalname))
+      .header("Content-Type", "image/jpeg")
+      .put(stream, { signal: controller.signal });
 
     return await Promise.race([uploadPromise, timeoutPromise]);
   } catch (err) {
