@@ -54,17 +54,17 @@ async function uploadPhoto(file) {
   try {
     const response = await client.api(photosUrl(file.originalname)).header("Content-Type", "image/jpeg").put(stream);
     console.log(response);
+    return response;
   } catch (err) {
     if (err.name === "AbortError") {
       console.error("⏱️ Request timed out after 5 minutes");
     } else {
-      throw err;
+      console.log(err);
     }
   } finally {
     clearTimeout(timeout);
+    return Promise.reject();
   }
-
-  return response;
 }
 
 async function appendFisheriesData(items) {
