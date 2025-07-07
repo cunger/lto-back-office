@@ -77,13 +77,17 @@ async function appendBeachCleanData(items) {
 }
 
 function asBeachCleanRow(item) {
+  const datetime = (item.date || 'T').split('T');
+  const date = datetime[0];
+  const time = datetime[1].split('.')[0].replace('Z','');
   item.signature = item.signature || {};
 
   return [
     item.signature.name || '',
     item.signature.email || '',
     item.signature.token || '',
-    item.date || '',
+    date,
+    time,
     item.location || '',
     item.category || '',
     item.quantity || '',
@@ -93,6 +97,9 @@ function asBeachCleanRow(item) {
 }
 
 function asFisheriesRow(item) {
+  const datetime = (item.date || 'T').split('T');
+  const date = datetime[0];
+  const time = datetime[1].split('.')[0].replace('Z','');
   item.signature = item.signature || {};
   item.photos = item.photos || [];
 
@@ -104,7 +111,8 @@ function asFisheriesRow(item) {
     item.signature.name || '',
     item.signature.email || '',
     item.signature.token || '',
-    item.date || '',
+    date,
+    time,
     item.location || '',
     item.method || '',
     item.base || '',
