@@ -7,6 +7,7 @@ const { PassThrough } = require('stream');
 
 let authProvider;
 let client;
+let controller;
 
 function load() {
   try {
@@ -22,9 +23,7 @@ function load() {
       }
     );
 
-    // Set timeout to 5 minutes
-    const controller = new AbortController();
-    setTimeout(() => { controller.abort(); }, 5 * 60_000);
+    controller = new AbortController();
 
     client = Client.initWithMiddleware({
       fetchOptions: { signal: controller.signal },
@@ -50,8 +49,20 @@ async function uploadPhoto(file) {
   const stream = new PassThrough();
   stream.end(file.buffer);
 
-  const response = await client.api(photosUrl(file.originalname)).header("Content-Type", "image/jpeg").put(stream);
-  console.log(response);
+  const timeout = setTimeout(() => { controller.abort(); }, 5 * 60_000);
+
+  try {
+    const response = await client.api(photosUrl(file.originalname)).header("Content-Type", "image/jpeg").put(stream);
+    console.log(response);
+  } catch (err) {
+    if (err.name === "AbortError") {
+      console.error("⏱️ Request timed out after 5 minutes");
+    } else {
+      throw err;
+    }
+  } finally {
+    clearTimeout(timeout);
+  }
 
   return response;
 }
