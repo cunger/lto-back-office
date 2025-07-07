@@ -3,7 +3,6 @@ require('dotenv').config();
 const { Client } = require('@microsoft/microsoft-graph-client');
 const { ClientSecretCredential } = require('@azure/identity');
 const { TokenCredentialAuthenticationProvider } = require('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
-const { TimeoutHandler } = require('@microsoft/microsoft-graph-client/lib/middleware/options/TimeoutHandler');
 const { PassThrough } = require('stream');
 
 let authProvider;
@@ -23,12 +22,18 @@ function load() {
       }
     );
 
+    const FIVE_MINUTES = 5 * 60_000;
+
     client = Client.initWithMiddleware({
       debugLogging: true,
       authProvider: authProvider,
+      fetchOptions: {
+        agent: {
+          http:  new http.Agent({  timeout: FIVE_MINUTES }),
+          https: new https.Agent({ timeout: FIVE_MINUTES }),
+        }
+      }
     });
-
-    //client.api(`https://graph.microsoft.com/v1.0/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_LIST_ID}/items/2`).get().then(result => console.log(result));
   } catch (error) {
     console.log(error);
   }
@@ -48,11 +53,7 @@ async function uploadPhoto(file) {
   const stream = new PassThrough();
   stream.end(file.buffer);
 
-  const response = await client
-    .api(photosUrl(file.originalname))
-    .header("Content-Type", "image/jpeg")
-    .middlewareOptions(new TimeoutHandler(300_000)) // 5 minutes
-    .put(stream);
+  const response = await client.api(photosUrl(file.originalname)).header("Content-Type", "image/jpeg").put(stream);
   console.log(response);
 
   return response;
