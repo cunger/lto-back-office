@@ -22,17 +22,14 @@ function load() {
       }
     );
 
-    const FIVE_MINUTES = 5 * 60_000;
+    // Set timeout to 5 minutes
+    const controller = new AbortController();
+    setTimeout(() => { controller.abort(); }, 5 * 60_000);
 
     client = Client.initWithMiddleware({
+      fetchOptions: { signal: controller.signal },
       debugLogging: true,
       authProvider: authProvider,
-      fetchOptions: {
-        agent: {
-          http:  new http.Agent({  timeout: FIVE_MINUTES }),
-          https: new https.Agent({ timeout: FIVE_MINUTES }),
-        }
-      }
     });
   } catch (error) {
     console.log(error);
