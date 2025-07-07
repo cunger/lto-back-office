@@ -39,7 +39,7 @@ const beachCleanUrl = `${worksheetsUrl}/BeachClean/tables/Table1/rows/add`;
 const fisheriesUrl = `${worksheetsUrl}/Fisheries/tables/Table2/rows/add`;
 
 // OneDrive folder for the photos
-const photosUrl = (filename) => `https://graph.microsoft.com/v1.0/drives/${process.env.SHAREPOINT_DRIVE_ID}/root:/AppUploads/${filename}:/content`;
+const photosUrl = (filename) => `https://graph.microsoft.com/v1.0/drives/${process.env.SHAREPOINT_DRIVE_ID}/root:/Fisheries%20Live%20Files%20photos/AppUploads/${filename}:/content`;
 
 async function uploadPhoto(file) {
   if (client === undefined) load();
