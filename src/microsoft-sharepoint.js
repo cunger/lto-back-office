@@ -3,6 +3,7 @@ require('dotenv').config();
 const { Client } = require('@microsoft/microsoft-graph-client');
 const { ClientSecretCredential } = require('@azure/identity');
 const { TokenCredentialAuthenticationProvider } = require('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
+const { PassThrough } = require('stream');
 
 let authProvider;
 let client;
