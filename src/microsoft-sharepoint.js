@@ -3,7 +3,6 @@ require('dotenv').config();
 const { Client } = require('@microsoft/microsoft-graph-client');
 const { ClientSecretCredential } = require('@azure/identity');
 const { TokenCredentialAuthenticationProvider } = require('@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials');
-const { PassThrough } = require('stream');
 
 let authProvider;
 let client;
@@ -45,6 +44,13 @@ async function uploadPhoto(file) {
 
   console.log("Uploading photo with an " + (typeof file.buffer) + " buffer length of " + Buffer.byteLength(file.buffer));
 
+  const mimeType = detectMimeType(file.buffer);
+  console.log("Detected MIME type: " + mimeType);
+
+  if (mimeType === "image/heic") {
+    file.originalname = file.originalname.replace('jpg', 'heic');
+  }
+
   // Set a 5 minutes timeout
   const controller = new AbortController();
   const timeoutPromise = new Promise((_, reject) => {
@@ -58,7 +64,7 @@ async function uploadPhoto(file) {
   try {
     const uploadPromise = client
       .api(photosUrl(file.originalname))
-      .header("Content-Type", "image/jpeg")
+      .header("Content-Type", mimeType)
       .put(new Uint8Array(file.buffer), { signal: controller.signal });
 
     return await Promise.race([uploadPromise, timeoutPromise]);
@@ -208,6 +214,25 @@ function printDimension(dimension) {
     str = '';
   }
   return str;
+}
+
+function detectMimeType(buffer) {
+  if (Buffer.isBuffer(buffer)) {
+    const jpegSig = buffer.slice(0, 3).toString('hex'); // JPEG = ff d8 ff
+    const heicBrand = buffer.slice(8, 12).toString();   // HEIC brand is at offset 8
+
+    if (jpegSig === 'ffd8ff') {
+      return 'image/jpeg';
+    }
+
+    // HEIC files often contain 'heic', 'heix', 'hevc' as brand identifier
+    const heicBrands = ['heic', 'heix', 'hevc', 'mif1', 'msf1'];
+    if (heicBrands.includes(heicBrand)) {
+      return 'image/heic';
+    }
+  }
+
+  return 'application/octet-stream';
 }
 
 module.exports = { uploadPhoto, appendFisheriesData, appendBeachCleanData };
