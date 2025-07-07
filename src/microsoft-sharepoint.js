@@ -26,6 +26,8 @@ function load() {
       debugLogging: true,
       authProvider: authProvider,
     });
+
+    //client.api(`https://graph.microsoft.com/v1.0/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_LIST_ID}/items/2`).get().then(result => console.log(result));
   } catch (error) {
     console.log(error);
   }
@@ -37,7 +39,7 @@ const beachCleanUrl = `${worksheetsUrl}/BeachClean/tables/Table1/rows/add`;
 const fisheriesUrl = `${worksheetsUrl}/Fisheries/tables/Table2/rows/add`;
 
 // One drive folder for the photos
-const photosUrl = (filename) => `https://graph.microsoft.com/v1.0/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_LIST_ID}/items/2/${filename}/content`;
+const photosUrl = `https://graph.microsoft.com/v1.0/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_LIST_ID}/items/2/attachments`;
 
 async function uploadPhoto(file) {
   if (client === undefined) load();
@@ -45,7 +47,10 @@ async function uploadPhoto(file) {
   const stream = new PassThrough();
   stream.end(file.buffer);
 
-  const response = await client.api(photosUrl(file.originalname)).put(stream);
+  const response = await client.api(photosUrl).put({
+    "name": file.originalname,
+    "contentBytes": stream,
+  });
   console.log(response);
 
   return response;
@@ -194,4 +199,4 @@ function printDimension(dimension) {
   return str;
 }
 
-module.exports = { uploadPhoto, appendFisheriesData, appendBeachCleanData };
+module.exports = { load, uploadPhoto, appendFisheriesData, appendBeachCleanData };
