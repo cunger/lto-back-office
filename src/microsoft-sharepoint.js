@@ -30,14 +30,29 @@ function load() {
   }
 }
 
+// Excel sheets for the data
 const worksheetsUrl = `https://graph.microsoft.com/v1.0/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_LIST_ID}/items/1/driveitem/workbook/worksheets`;
 const beachCleanUrl = `${worksheetsUrl}/BeachClean/tables/Table1/rows/add`;
 const fisheriesUrl = `${worksheetsUrl}/Fisheries/tables/Table2/rows/add`;
-// Create a table by calling:
-// await client.api(`${worksheetsUrl}/Fisheries/tables/add`).post({ address: "A1:Y1", hasHeaders: true });
+
+// One drive folder for the photos
+const photosUrl = (filename) => `https://graph.microsoft.com/v1.0/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_LIST_ID}/items/2/${filename}/content`;
+
+async function uploadPhoto(file) {
+  if (client === undefined) load();
+
+  const stream = new PassThrough();
+  stream.end(file.buffer);
+
+  const response = await client.api(photosUrl(file.originalname)).put(stream);
+  console.log(response);
+
+  return response;
+}
 
 async function appendFisheriesData(items) {
     if (client === undefined) load();
+
     if (items.length === 0) {
       console.log('No fisheries data to upload.');
       return Promise.resolve({ values: [] });
@@ -58,6 +73,7 @@ async function appendFisheriesData(items) {
 
 async function appendBeachCleanData(items) {
     if (client === undefined) load();
+
     if (items.length === 0) {
       console.log('No beach clean data to upload.');
       return Promise.resolve({ values: [] });
@@ -177,4 +193,4 @@ function printDimension(dimension) {
   return str;
 }
 
-module.exports = { appendFisheriesData, appendBeachCleanData };
+module.exports = { uploadPhoto, appendFisheriesData, appendBeachCleanData };

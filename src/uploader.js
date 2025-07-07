@@ -1,19 +1,18 @@
-const GoogleDrive = require('./google-drive');
 const SharePoint = require('./microsoft-sharepoint');
 
 async function uploadPhoto(file) {
   let result = { link: undefined, errors: [] };
 
   try {
-    const response = await GoogleDrive.uploadPhoto(file);
+    const response = await SharePoint.uploadPhoto(file);
 
     if (response.status === 200) {
-      result.link = `https://drive.google.com/file/d/${response.data.id}`;
+      result.link = `TODO`;
     } else {
       result.errors.push(`${response.status} ${response.statusMessage}`);
     }
   } catch (error) {
-    console.log(`[ERROR: GoogleDrive.uploadPhoto] ${error}`);
+    console.log(`[ERROR: SharePoint.uploadPhoto] ${error}`);
     result.errors.push(`${error}`);
   }
 
