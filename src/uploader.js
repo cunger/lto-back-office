@@ -7,7 +7,7 @@ async function uploadPhoto(file) {
     const response = await SharePoint.uploadPhoto(file);
 
     if (response.status === 200) {
-      result.link = `TODO`; // contentUrl
+      result.link = response.webUrl;
     } else {
       result.errors.push(`${response.status} ${response.statusMessage}`);
     }

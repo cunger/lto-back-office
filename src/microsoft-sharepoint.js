@@ -48,7 +48,7 @@ async function uploadPhoto(file) {
   stream.end(file.buffer);
 
   const response = await client.api(photosUrl(file.originalname))
-    .header("Content-Type", "image/jpg")
+    .header("Content-Type", "image/jpeg")
     .put(stream);
   console.log(response);
 
@@ -198,4 +198,4 @@ function printDimension(dimension) {
   return str;
 }
 
-module.exports = { load, uploadPhoto, appendFisheriesData, appendBeachCleanData };
+module.exports = { uploadPhoto, appendFisheriesData, appendBeachCleanData };
