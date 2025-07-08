@@ -55,7 +55,7 @@ async function uploadPhoto(file) {
     return await client
       .api(photosUrl(file.originalname))
       .header("Content-Type", mimeType)
-      .put(new Uint8Array(file.buffer), { signal: controller.signal });
+      .put(new Uint8Array(file.buffer));
   } catch (error) {
     return Promise.reject(error);
   }
