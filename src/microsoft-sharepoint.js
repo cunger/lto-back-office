@@ -51,25 +51,13 @@ async function uploadPhoto(file) {
     file.originalname = file.originalname.replace('jpg', 'heic');
   }
 
-  // Set a 5 minutes timeout
-  const controller = new AbortController();
-  const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => {
-      console.log("Aborting...");
-      controller.abort();
-      reject(new Error("Request timed out after 5 minutes"));
-    }, 5 * 60_000);
-  });
-
   try {
-    const uploadPromise = client
+    return await client
       .api(photosUrl(file.originalname))
       .header("Content-Type", mimeType)
       .put(new Uint8Array(file.buffer), { signal: controller.signal });
-
-    return await Promise.race([uploadPromise, timeoutPromise]);
-  } catch (err) {
-    return Promise.reject(err);
+  } catch (error) {
+    return Promise.reject(error);
   }
 }
 
@@ -118,7 +106,7 @@ async function appendBeachCleanData(items) {
 function asBeachCleanRow(item) {
   // Shift from incoming UTC time to local Mozambique time.
   const utcDate = new Date(item.date);
-  const localDate = new Date(utcDate.getTime() - 2 * 60 * 60000);
+  const localDate = new Date(utcDate.getTime() + 2 * 60 * 60000);
   // Split date and time, so we can insert them into different columns.
   const datetime = localDate.toISOString().split('T');
   const date = datetime[0];
@@ -142,7 +130,7 @@ function asBeachCleanRow(item) {
 function asFisheriesRow(item) {
   // Shift from incoming UTC time to local Mozambique time.
   const utcDate = new Date(item.date);
-  const localDate = new Date(utcDate.getTime() - 2 * 60 * 60000);
+  const localDate = new Date(utcDate.getTime() + 2 * 60 * 60000);
   // Split date and time, so we can insert them into different columns.
   const datetime = localDate.toISOString().split('T');
   const date = datetime[0];
