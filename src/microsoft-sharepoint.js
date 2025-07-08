@@ -116,7 +116,11 @@ async function appendBeachCleanData(items) {
 }
 
 function asBeachCleanRow(item) {
-  const datetime = (item.date || 'T').split('T');
+  // Shift from incoming UTC time to local Mozambique time.
+  const utcDate = new Date(item.date);
+  const localDate = new Date(utcDate.getTime() - 2 * 60 * 60000);
+  // Split date and time, so we can insert them into different columns.
+  const datetime = localDate.toISOString().split('T');
   const date = datetime[0];
   const time = datetime[1].split('.')[0].replace('Z','');
   item.signature = item.signature || {};
@@ -136,7 +140,11 @@ function asBeachCleanRow(item) {
 }
 
 function asFisheriesRow(item) {
-  const datetime = (item.date || 'T').split('T');
+  // Shift from incoming UTC time to local Mozambique time.
+  const utcDate = new Date(item.date);
+  const localDate = new Date(utcDate.getTime() - 2 * 60 * 60000);
+  // Split date and time, so we can insert them into different columns.
+  const datetime = localDate.toISOString().split('T');
   const date = datetime[0];
   const time = datetime[1].split('.')[0].replace('Z','');
   item.signature = item.signature || {};
