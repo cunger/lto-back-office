@@ -52,12 +52,16 @@ async function uploadPhoto(file) {
   }
 
   try {
-    return await client
+    const response = await client
       .api(photosUrl(file.originalname))
       .header("Content-Type", mimeType)
       .put(new Uint8Array(file.buffer));
+    
+    console.log(response);
+    return response;
   } catch (error) {
-    return Promise.reject(error);
+    console.log(error);
+    return { status: 418, statusMessage: "I'm a teapot." };
   }
 }
 
