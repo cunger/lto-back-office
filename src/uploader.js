@@ -1,22 +1,8 @@
 const SharePoint = require('./microsoft-sharepoint');
 
 async function uploadPhoto(file) {
-  let result = { link: undefined, errors: [] };
-
-  try {
-    const response = await SharePoint.uploadPhoto(file);
-
-    if (response.status === 200) {
-      result.link = response.webUrl || `https://netorg2591883.sharepoint.com/sites/LTOLiveFisheriesFile/Shared%20Documents/Fisheries%20Live%20Files%20photos/AppUploads/${file.originalname}`;
-    } else {
-      result.errors.push(`${response.status} ${response.statusMessage}`);
-    }
-  } catch (error) {
-    console.log(`[ERROR: SharePoint.uploadPhoto] ${error}`);
-    result.errors.push(`${error}`);
-  }
-
-  return result;
+  const url = await SharePoint.uploadPhoto(file);
+  return url;
 }
 
 async function upload(items) {

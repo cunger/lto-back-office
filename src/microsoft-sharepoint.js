@@ -57,11 +57,10 @@ async function uploadPhoto(file) {
       .header("Content-Type", mimeType)
       .put(new Uint8Array(file.buffer));
     
-    console.log(response);
-    return response;
+      console.log("response.webUrl: " + response.webUrl);
+    return response.webUrl || `https://netorg2591883.sharepoint.com/sites/LTOLiveFisheriesFile/Shared%20Documents/Fisheries%20Live%20Files%20photos/AppUploads/${file.originalname}`;
   } catch (error) {
     console.log(error);
-    return { status: 418, statusMessage: "I'm a teapot." };
   }
 }
 

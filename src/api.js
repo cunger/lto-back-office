@@ -24,10 +24,10 @@ router.post('/photo', middleware.single('file'), async (request, response) => {
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
 
   try {
-    const result = await uploader.uploadPhoto(request.file);
-    console.log(result);
+    const url = await uploader.uploadPhoto(request.file);
+    console.log("Responding with link: " + url);
 
-    return response.status(200).json(result);
+    return response.status(200).json({ link: url });
   } catch (error) {
     console.log(`[ERROR: /photo] ${error}`);
     return response.status(500).json({ errors: `${error}` });
