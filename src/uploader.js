@@ -7,7 +7,7 @@ async function uploadPhoto(file) {
     const response = await SharePoint.uploadPhoto(file);
 
     if (response.status === 200) {
-      result.link = response.webUrl;
+      result.link = response.webUrl || `https://netorg2591883.sharepoint.com/sites/LTOLiveFisheriesFile/Shared%20Documents/Fisheries%20Live%20Files%20photos/AppUploads/${file.originalname}`;
     } else {
       result.errors.push(`${response.status} ${response.statusMessage}`);
     }
