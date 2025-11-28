@@ -34,6 +34,48 @@ router.post('/photo', middleware.single('file'), async (request, response) => {
   }
 });
 
+router.post('/items', async (request, response) => {
+  console.log('Incoming /items...');
+  
+  if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
+  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
+
+  try {
+    const items = request.body.items;
+    if (!items) return response.sendStatus(400);
+
+    const result = await uploader.uploadItems(items);
+    console.log(result);
+
+    return response.status(200).json(result);
+  } catch (error) {
+    console.log(`[ERROR: /items] ${error}`);
+    return response.status(500).json({ errors: `${error}` });
+  }
+});
+
+router.post('/sessions', async (request, response) => {
+  console.log('Incoming /sessions...');
+  
+  if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
+  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
+
+  try {
+    const sessions = request.body.sessions;
+    if (!sessions) return response.sendStatus(400);
+
+    const result = await uploader.uploadSessions(sessions);
+    console.log(result);
+
+    return response.status(200).json(result);
+  } catch (error) {
+    console.log(`[ERROR: /sessions] ${error}`);
+    return response.status(500).json({ errors: `${error}` });
+  }
+});
+
+// This is a legacy endpoint, kept for older versions.
+// Do not touch, to ensure backwards compatibility.
 router.post('/data', async (request, response) => {
   console.log('Incoming /data...');
   
@@ -44,7 +86,7 @@ router.post('/data', async (request, response) => {
     const items = request.body.items;
     if (!items) return response.sendStatus(400);
 
-    const result = await uploader.upload(items);
+    const result = await uploader.uploadData(items);
     console.log(result);
 
     return response.status(200).json(result);

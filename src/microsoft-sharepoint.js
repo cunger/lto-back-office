@@ -64,7 +64,7 @@ async function uploadPhoto(file) {
   }
 }
 
-async function appendFisheriesData(items) {
+async function appendFisheriesItems(items) {
     if (client === undefined) load();
 
     if (items.length === 0) {
@@ -85,7 +85,7 @@ async function appendFisheriesData(items) {
     }
 }
 
-async function appendBeachCleanData(items) {
+async function appendBeachCleanItems(items) {
     if (client === undefined) load();
 
     if (items.length === 0) {
@@ -104,6 +104,16 @@ async function appendBeachCleanData(items) {
       console.log(error);
       return Promise.resolve({ values: [], error: error });
     }
+}
+
+async function appendFisheriesSessions(sessions) {
+  // TODO
+  return { error: 'Not implemented yet.' };
+}
+
+async function appendBeachCleanSessions(sessions) {
+  // TODO
+  return { error: 'Not implemented yet.' };
 }
 
 function asBeachCleanRow(item) {
