@@ -34,37 +34,17 @@ router.post('/photo', middleware.single('file'), async (request, response) => {
   }
 });
 
-router.post('/items', async (request, response) => {
-  console.log('Incoming /items...');
-  
-  if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
-  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
-
-  try {
-    const items = request.body.items;
-    if (!items) return response.sendStatus(400);
-
-    const result = await uploader.uploadItems(items);
-    console.log(result);
-
-    return response.status(200).json(result);
-  } catch (error) {
-    console.log(`[ERROR: /items] ${error}`);
-    return response.status(500).json({ errors: `${error}` });
-  }
-});
-
 router.post('/sessions', async (request, response) => {
-  console.log('Incoming /sessions...');
+  console.log('Incoming session...');
   
   if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
 
   try {
-    const sessions = request.body.sessions;
-    if (!sessions) return response.sendStatus(400);
+    const session = request.body;
+    if (!session || !session.id) return response.sendStatus(400);
 
-    const result = await uploader.uploadSessions(sessions);
+    const result = await uploader.uploadSession(session);
     console.log(result);
 
     return response.status(200).json(result);

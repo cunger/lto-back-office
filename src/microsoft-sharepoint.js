@@ -33,8 +33,9 @@ function load() {
 
 // Excel sheets for the data
 const worksheetsUrl = `https://graph.microsoft.com/v1.0/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_LIST_ID}/items/1/driveitem/workbook/worksheets`;
-const beachCleanUrl = `${worksheetsUrl}/BeachClean/tables/Table1/rows/add`;
-const fisheriesUrl = `${worksheetsUrl}/Fisheries/tables/Table2/rows/add`;
+const beachCleanItemsUrl = `${worksheetsUrl}/BeachClean/tables/Table1/rows/add`;
+const fisheriesItemsUrl = `${worksheetsUrl}/Fisheries/tables/Table2/rows/add`;
+const beachCleanSessionsUrl = `${worksheetsUrl}/BeachClean/tables/Table3/rows/add`;
 
 // OneDrive folder for the photos
 const photosUrl = (filename) => `https://graph.microsoft.com/v1.0/drives/${process.env.SHAREPOINT_DRIVE_ID}/root:/Fisheries%20Live%20Files%20photos/AppUploads/${filename}:/content`;
@@ -65,58 +66,172 @@ async function uploadPhoto(file) {
 }
 
 async function appendFisheriesItems(items) {
-    if (client === undefined) load();
+  if (client === undefined) load();
 
-    if (items.length === 0) {
-      console.log('No fisheries data to upload.');
-      return Promise.resolve({ values: [] });
-    }
+  if (items.length === 0) {
+    console.log('No fisheries items to upload.');
+    return Promise.resolve({ values: [] });
+  }
 
-    const body = JSON.stringify({
-      values: items.map(item => asFisheriesRow(item))
-    });
-    console.log(`Uploading: ${body}`);
+  const body = JSON.stringify({
+    values: items.map(item => asFisheriesDataRow(item))
+  });
+  console.log(`Uploading: ${body}`);
 
-    try {
-      return await client.api(fisheriesUrl).post(body);
-    } catch (error) {
-      console.log(error);
-      return Promise.resolve({ values: [], error: error });
-    }
+  try {
+    return await client.api(fisheriesItemsUrl).post(body);
+  } catch (error) {
+    console.log(error);
+    return Promise.resolve({ values: [], error: error });
+  }
 }
 
 async function appendBeachCleanItems(items) {
-    if (client === undefined) load();
+  if (client === undefined) load();
 
-    if (items.length === 0) {
-      console.log('No beach clean data to upload.');
-      return Promise.resolve({ values: [] });
-    }
+  if (items.length === 0) {
+    console.log('No beach clean items to upload.');
+    return Promise.resolve({ values: [] });
+  }
 
-    const body = JSON.stringify({
-      values: items.map(item => asBeachCleanRow(item)),
-    });
-    console.log(`Uploading: ${body}`);
+  const body = JSON.stringify({
+    values: items.map(item => asBeachCleanItemRow(item)),
+  });
+  console.log(`Uploading: ${body}`);
+
+  try {
+    return await client.api(beachCleanItemsUrl).post(body);
+  } catch (error) {
+    console.log(error);
+    return Promise.resolve({ values: [], error: error });
+  }
+}
+
+async function appendFisheriesSession(session) {
+  // TODO
+  return { error: 'Not implemented yet.' };
+}
+
+async function appendBeachCleanSession(session) {
+  if (client === undefined) load();
+
+  if (!session) {
+    console.log('No beach clean session to upload.');
+    return Promise.resolve({ values: [] });
+  }
+
+  const body = JSON.stringify({
+    values: items.map(item => asBeachCleanSessionRow(session)),
+  });
+  console.log(`Uploading: ${body}`);
 
     try {
-      return await client.api(beachCleanUrl).post(body);
+      return await client.api(beachCleanSessionsUrl).post(body);
     } catch (error) {
       console.log(error);
       return Promise.resolve({ values: [], error: error });
     }
 }
 
-async function appendFisheriesSessions(sessions) {
-  // TODO
-  return { error: 'Not implemented yet.' };
+function asBeachCleanItemRow(item, session) {
+  return [
+    item.sessionId || '',
+    session.date || '',
+    session.location || '',
+    item.category || '',
+    item.quantity || '',
+    session.signature.name || '',
+    session.signature.email || '',
+    `Uploaded from app on ${new Date().toISOString()})`,
+  ];
 }
 
-async function appendBeachCleanSessions(sessions) {
-  // TODO
-  return { error: 'Not implemented yet.' };
+function asBeachCleanSessionRow(session) {
+  // Shift from incoming UTC time to local Mozambique time.
+  const utcStartDate = new Date(session.startDate);
+  const utcEndDate = new Date(session.endDate);
+  const localStartDate = new Date(utcStartDate.getTime() + 2 * 60 * 60000);
+  const localEndDate = new Date(utcEndDate.getTime() + 2 * 60 * 60000);
+  const duration = (localEndDate.getTime() - localStartDate.getTime()) / 60_000; // minutes
+  const durationHours = Math.floor(durationMinutes / 60);
+  const durationMinutes = duration - (durationHours * 60);
+  // Split date and time, so we can insert them into different columns.
+  const startDatetime = localStartDate.toISOString().split('T');
+  const endDatetime = localEndDate.toISOString().split('T');
+  const date = startDatetime[0] == endDatetime[0]
+    ? startDatetime[0]
+    : startDatetime + ' - ' + endDatetime[0];
+  const startTime = startDatetime[1].split('.')[0].replace('Z','');
+  const endTime = endDatetime[1].split('.')[0].replace('Z','');
+
+  session.signature = session.signature || {};
+
+  return [
+    session.id,
+    date,
+    startTime,
+    endTime,
+    `${durationHours} h ${durationMinutes} min`,
+    session.location || '',
+    session.signature.name || '',
+    session.signature.email || '',
+    session.signature.token || '',
+    session.numberOfPeople || '',
+    session.totalWeightInKg || '',
+    session.additionalNotes || '',
+    `Uploaded from app on ${new Date().toISOString()})`,
+  ];
 }
 
-function asBeachCleanRow(item) {
+// Legacy function.
+// Do not touch, to ensurebackwards compatibility.
+async function appendFisheriesData(items) {
+  if (client === undefined) load();
+
+  if (items.length === 0) {
+    console.log('No fisheries items to upload.');
+    return Promise.resolve({ values: [] });
+  }
+
+  const body = JSON.stringify({
+    values: items.map(item => asFisheriesDataRow(item))
+  });
+  console.log(`Uploading: ${body}`);
+
+  try {
+    return await client.api(fisheriesItemsUrl).post(body);
+  } catch (error) {
+    console.log(error);
+    return Promise.resolve({ values: [], error: error });
+  }
+}
+
+// Legacy function.
+// Do not touch, to ensurebackwards compatibility.
+async function appendBeachCleanData(items) {
+  if (client === undefined) load();
+
+  if (items.length === 0) {
+    console.log('No beach clean items to upload.');
+    return Promise.resolve({ values: [] });
+  }
+
+  const body = JSON.stringify({
+    values: items.map(item => asBeachCleanDataRow(item)),
+  });
+  console.log(`Uploading: ${body}`);
+
+  try {
+    return await client.api(beachCleanItemsUrl).post(body);
+  } catch (error) {
+    console.log(error);
+    return Promise.resolve({ values: [], error: error });
+  }
+}
+
+// Legacy function.
+// Do not touch, to ensurebackwards compatibility.
+function asBeachCleanDataRow(item) {
   // Shift from incoming UTC time to local Mozambique time.
   const utcDate = new Date(item.date);
   const localDate = new Date(utcDate.getTime() + 2 * 60 * 60000);
@@ -140,7 +255,9 @@ function asBeachCleanRow(item) {
   ];
 }
 
-function asFisheriesRow(item) {
+// Legacy function.
+// Do not touch, to ensurebackwards compatibility.
+function asFisheriesDataRow(item) {
   // Shift from incoming UTC time to local Mozambique time.
   const utcDate = new Date(item.date);
   const localDate = new Date(utcDate.getTime() + 2 * 60 * 60000);
@@ -244,4 +361,11 @@ function detectMimeType(buffer) {
   return 'application/octet-stream';
 }
 
-module.exports = { uploadPhoto, appendFisheriesData, appendBeachCleanData };
+module.exports = {
+  uploadPhoto,
+  appendFisheriesItems,
+  appendBeachCleanItems,
+  appendBeachCleanSessions,
+  appendFisheriesData,
+  appendBeachCleanData,
+};

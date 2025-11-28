@@ -5,82 +5,44 @@ async function uploadPhoto(file) {
   return url;
 }
 
-async function uploadItems(items) {
+async function uploadSession(session) {
   let result = { uploaded: [], errors: [] };
-
-  const catches = items.filter(item => item.type == 'Catch');
-  const trashes = items.filter(item => item.type == 'Trash');
-
   let response;
 
   try {
-    response = await SharePoint.appendFisheriesItems(catches);
+    // Append session row in table.
+    if (session.type == 'BeachClean') {
+      response = await SharePoint.appendBeachCleanSession(session);
+    } else if (session.type == 'Fisheries') {
+      response = await SharePoint.appendFisheriesSession(session);
+    } else {
+      result.errors.push(`Unknown session type: ${session.type}`);
+      return result;
+    }
     
     if (!response.error) {
-      for (let item of catches) {
-        result.uploaded.push(item.id);
-      }
+      result.uploaded.push(session.id);
     } else {
       result.errors.push(`${response.error}`);
     }
-  } catch (error) {
-    console.log(`[ERROR: SharePoint.appendFisheriesItems] ${error}`);
-    result.errors.push(`${error}`);
-  }
 
-  try {
-    response = await SharePoint.appendBeachCleanItems(trashes);
+    // Append item rows in table.
+    if (session.type == 'BeachClean') {
+      response = await SharePoint.appendBeachCleanItems(session);
+    } else if (session.type == 'Fisheries') {
+      response = await SharePoint.appendFisheriesItems(session);
+    } else {
+      result.errors.push(`Unknown session type: ${session.type}`);
+      return result;
+    }
 
     if (!response.error) {
-      for (let item of trashes) {
-        result.uploaded.push(item.id);
-      }
+      result.uploaded.push(session.id);
     } else {
       result.errors.push(`${response.error}`);
     }
   } catch (error) {
-    console.log(`[ERROR: SharePoint.appendBeachCleanItems] ${error}`);
-    result.errors.push(`${error}`);
-  }
-
-  return result;
-}
-
-async function uploadSessions(sessions) {
-  let result = { uploaded: [], errors: [] };
-
-  const fisheries = items.filter(session => session.type == 'Fisheries');
-  const beachcleans = items.filter(session => session.type == 'BeachClean');
-
-  let response;
-
-  try {
-    response = await SharePoint.appendFisheriesSessions(fisheries);
-    
-    if (!response.error) {
-      for (let session of fisheries) {
-        result.uploaded.push(session.id);
-      }
-    } else {
-      result.errors.push(`${response.error}`);
-    }
-  } catch (error) {
-    console.log(`[ERROR: SharePoint.appendFisheriesSessions] ${error}`);
-    result.errors.push(`${error}`);
-  }
-
-  try {
-    response = await SharePoint.appendBeachCleanSessions(beachcleans);
-
-    if (!response.error) {
-      for (let session of beachcleans) {
-        result.uploaded.push(session.id);
-      }
-    } else {
-      result.errors.push(`${response.error}`);
-    }
-  } catch (error) {
-    console.log(`[ERROR: SharePoint.appendBeachCleanSessions] ${error}`);
+    console.log(`[ERROR] ${error}`);
     result.errors.push(`${error}`);
   }
 
@@ -98,7 +60,7 @@ async function uploadData(items) {
   let response;
 
   try {
-    response = await SharePoint.appendFisheriesItems(catches);
+    response = await SharePoint.appendFisheriesData(catches);
     
     if (!response.error) {
       for (let item of catches) {
@@ -113,7 +75,7 @@ async function uploadData(items) {
   }
 
   try {
-    response = await SharePoint.appendBeachCleanItems(trashes);
+    response = await SharePoint.appendBeachCleanData(trashes);
 
     if (!response.error) {
       for (let item of trashes) {
