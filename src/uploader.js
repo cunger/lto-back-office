@@ -36,9 +36,7 @@ async function uploadSession(session) {
       return result;
     }
 
-    if (!response.error) {
-      result.uploaded.push(session.id);
-    } else {
+    if (response.error) {
       result.errors.push(`${response.error}`);
     }
   } catch (error) {
@@ -62,7 +60,7 @@ async function uploadData(items) {
   try {
     response = await SharePoint.appendFisheriesData(catches);
     
-    if (!response.error) {
+    if (!response?.error) {
       for (let item of catches) {
         result.uploaded.push(item.id);
       }
@@ -77,7 +75,7 @@ async function uploadData(items) {
   try {
     response = await SharePoint.appendBeachCleanData(trashes);
 
-    if (!response.error) {
+    if (!response?.error) {
       for (let item of trashes) {
         result.uploaded.push(item.id);
       }

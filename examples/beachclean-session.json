@@ -1,0 +1,23 @@
+{
+  "id": "29pfh394g9348g94g",
+  "type": "BeachClean",
+  "startDate": 1764421920,
+  "endDate": 1764421930,
+  "location": "Coconut Beach",
+  "items": [
+    {
+      "sessionId": "29pfh394g9348g94g",
+      "quantity": 0,
+      "category": "Other"
+    }
+  ],
+  "totalWeightInKg": 10.5,
+  "numberOfPeople": 2,
+  "additionalNotes": "",
+  "synced": false,
+  "signature": {
+    "name": "christina",
+    "email": "",
+    "token": "test"
+  }
+}

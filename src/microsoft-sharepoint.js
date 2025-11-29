@@ -33,9 +33,10 @@ function load() {
 
 // Excel sheets for the data
 const worksheetsUrl = `https://graph.microsoft.com/v1.0/sites/${process.env.SHAREPOINT_SITE_ID}/lists/${process.env.SHAREPOINT_LIST_ID}/items/1/driveitem/workbook/worksheets`;
-const beachCleanItemsUrl = `${worksheetsUrl}/BeachClean/tables/Table1/rows/add`;
+const beachCleanDataUrl = `${worksheetsUrl}/BeachClean/tables/Table1/rows/add`;
 const fisheriesItemsUrl = `${worksheetsUrl}/Fisheries/tables/Table2/rows/add`;
-const beachCleanSessionsUrl = `${worksheetsUrl}/BeachClean/tables/Table3/rows/add`;
+const beachCleanSessionsUrl = `${worksheetsUrl}/BeachCleanSessions/tables/Table4/rows/add`;
+const beachCleanItemsUrl = `${worksheetsUrl}/BeachCleanItems/tables/Table3/rows/add`;
 
 // OneDrive folder for the photos
 const photosUrl = (filename) => `https://graph.microsoft.com/v1.0/drives/${process.env.SHAREPOINT_DRIVE_ID}/root:/Fisheries%20Live%20Files%20photos/AppUploads/${filename}:/content`;
@@ -86,16 +87,16 @@ async function appendFisheriesItems(items) {
   }
 }
 
-async function appendBeachCleanItems(items) {
+async function appendBeachCleanItems(session) {
   if (client === undefined) load();
 
-  if (items.length === 0) {
+  if (!session || session.items.length === 0) {
     console.log('No beach clean items to upload.');
     return Promise.resolve({ values: [] });
   }
 
   const body = JSON.stringify({
-    values: items.map(item => asBeachCleanItemRow(item)),
+    values: session.items.map(item => asBeachCleanItemRow(item, session)),
   });
   console.log(`Uploading: ${body}`);
 
@@ -121,16 +122,16 @@ async function appendBeachCleanSession(session) {
   }
 
   const body = JSON.stringify({
-    values: items.map(item => asBeachCleanSessionRow(session)),
+    values: [asBeachCleanSessionRow(session)],
   });
   console.log(`Uploading: ${body}`);
 
-    try {
-      return await client.api(beachCleanSessionsUrl).post(body);
-    } catch (error) {
-      console.log(error);
-      return Promise.resolve({ values: [], error: error });
-    }
+  try {
+    return await client.api(beachCleanSessionsUrl).post(body);
+  } catch (error) {
+    console.log(error);
+    return Promise.resolve({ values: [], error: error });
+  }
 }
 
 function asBeachCleanItemRow(item, session) {
@@ -142,7 +143,7 @@ function asBeachCleanItemRow(item, session) {
     item.quantity || '',
     session.signature.name || '',
     session.signature.email || '',
-    `Uploaded from app on ${new Date().toISOString()})`,
+    `Uploaded from app on ${new Date().toISOString()}`
   ];
 }
 
@@ -153,7 +154,7 @@ function asBeachCleanSessionRow(session) {
   const localStartDate = new Date(utcStartDate.getTime() + 2 * 60 * 60000);
   const localEndDate = new Date(utcEndDate.getTime() + 2 * 60 * 60000);
   const duration = (localEndDate.getTime() - localStartDate.getTime()) / 60_000; // minutes
-  const durationHours = Math.floor(durationMinutes / 60);
+  const durationHours = Math.floor(duration / 60);
   const durationMinutes = duration - (durationHours * 60);
   // Split date and time, so we can insert them into different columns.
   const startDatetime = localStartDate.toISOString().split('T');
@@ -171,7 +172,7 @@ function asBeachCleanSessionRow(session) {
     date,
     startTime,
     endTime,
-    `${durationHours} h ${durationMinutes} min`,
+    `${durationHours} h ${Math.floor(durationMinutes)} min`,
     session.location || '',
     session.signature.name || '',
     session.signature.email || '',
@@ -180,7 +181,7 @@ function asBeachCleanSessionRow(session) {
     session.items.length,
     session.totalWeightInKg || '',
     session.additionalNotes || '',
-    `Uploaded from app on ${new Date().toISOString()})`,
+    `Uploaded from app on ${new Date().toISOString()}`
   ];
 }
 
@@ -223,7 +224,7 @@ async function appendBeachCleanData(items) {
   console.log(`Uploading: ${body}`);
 
   try {
-    return await client.api(beachCleanItemsUrl).post(body);
+    return await client.api(beachCleanDataUrl).post(body);
   } catch (error) {
     console.log(error);
     return Promise.resolve({ values: [], error: error });
@@ -364,7 +365,37 @@ function detectMimeType(buffer) {
   return 'application/octet-stream';
 }
 
+// Export and run this to create new Table objects in the spreadsheet
+function createNewTable() {
+  if (client === undefined) load();
+
+  // client.api(`${worksheetsUrl}/BeachCleanItems/tables/add`).post({
+  //   "address": "A1:H1",
+  //   "hasHeaders": true,
+  //   "name": "Table3"
+  // });
+
+  // If you want to delete a table object, run:
+  // client.api(`${worksheetsUrl}/BeachCleanItems/tables/Table3`).delete();
+}
+
+async function inspectTables() {
+  if (client === undefined) load();
+
+  let response;
+  
+  response = await client.api(`${worksheetsUrl}/BeachCleanItems/tables/`).get();
+  console.log(response);
+  response = await client.api(`${worksheetsUrl}/BeachCleanSessions/tables/`).get();
+  console.log(response);
+  // To check the range of a table:
+  //response = await client.api(`${worksheetsUrl}/BeachCleanItemsessions/tables/Table4/range`).get();
+  //console.log(response);
+}
+
 module.exports = {
+  //createNewTable,
+  //inspectTables,
   uploadPhoto,
   appendFisheriesItems,
   appendBeachCleanItems,

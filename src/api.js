@@ -20,8 +20,13 @@ router.get('/ping', (request, response) => {
 router.post('/photo', middleware.single('file'), async (request, response) => {
   console.log('Incoming /photo...');
 
-  if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
-  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
+  console.log(request.headers);
+  console.log(request.files);
+
+  if (!request.headers[HEADER_KEY]) return response.sendStatus(400);
+  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(400);
+
+  if (!request.file) return response.sendStatus(400);
 
   try {
     const url = await uploader.uploadPhoto(request.file);
@@ -37,8 +42,8 @@ router.post('/photo', middleware.single('file'), async (request, response) => {
 router.post('/sessions', async (request, response) => {
   console.log('Incoming session...');
   
-  if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
-  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
+  if (!request.headers[HEADER_KEY]) return response.sendStatus(400);
+  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(400);
 
   try {
     const session = request.body;
@@ -58,9 +63,12 @@ router.post('/sessions', async (request, response) => {
 // Do not touch, to ensure backwards compatibility.
 router.post('/data', async (request, response) => {
   console.log('Incoming /data...');
-  
-  if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
-  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
+
+  console.log(request.headers);  
+  console.log(request.body);
+
+  if (!request.headers[HEADER_KEY]) return response.sendStatus(400);
+  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(400);
 
   try {
     const items = request.body.items;
