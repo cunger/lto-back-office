@@ -177,6 +177,7 @@ function asBeachCleanSessionRow(session) {
     session.signature.email || '',
     session.signature.token || '',
     session.numberOfPeople || '',
+    session.items.length,
     session.totalWeightInKg || '',
     session.additionalNotes || '',
     `Uploaded from app on ${new Date().toISOString()})`,
@@ -267,6 +268,7 @@ function asFisheriesDataRow(item) {
   const time = datetime[1].split('.')[0].replace('Z','');
   item.signature = item.signature || {};
   item.photos = item.photos || [];
+  item.photosNote = item.photosNote || '';
 
   if (item.method === 'Other' && item.other_method && item.other_method !== '') {
     item.method = item.other_method;
@@ -312,6 +314,7 @@ function asFisheriesDataRow(item) {
 }
 
 function printDimension(dimension) {
+  if (!dimension) return '';
   // old items
   if (typeof(dimension) === 'string') {
     return dimension;
@@ -365,7 +368,7 @@ module.exports = {
   uploadPhoto,
   appendFisheriesItems,
   appendBeachCleanItems,
-  appendBeachCleanSessions,
+  appendBeachCleanSession,
   appendFisheriesData,
   appendBeachCleanData,
 };

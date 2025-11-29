@@ -8,7 +8,7 @@
         "token": "test"
       },
       "type": "Trash",
-      "date": "1648984888413",
+      "date": 1648984888413,
       "location": "Guinjata",
       "category": "Lighter",
       "quantity": 3
@@ -21,7 +21,7 @@
         "token": "test"
       },
       "type": "Catch",
-      "date": "1648984888413",
+      "date": 1648984888413,
       "location": "Paindane",
       "method": "Net",
       "base": "Shore",

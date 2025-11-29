@@ -92,4 +92,4 @@ async function uploadData(items) {
   return result;
 }
 
-module.exports = { uploadPhoto, uploadData, uploadItems, uploadSessions };
+module.exports = { uploadPhoto, uploadData, uploadSession };
