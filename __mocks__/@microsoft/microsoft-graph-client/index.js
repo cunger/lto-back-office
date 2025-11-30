@@ -6,19 +6,6 @@ const mockDelete = jest.fn();
 const mockHeader = jest.fn();
 const mockVersion = jest.fn();
 
-// Reset all to return 'this' for chaining by default
-const resetChaining = () => {
-  mockPut.mockReturnThis();
-  mockPost.mockReturnThis();
-  mockGet.mockReturnThis();
-  mockPatch.mockReturnThis();
-  mockDelete.mockReturnThis();
-  mockHeader.mockReturnThis();
-  mockVersion.mockReturnThis();
-};
-
-resetChaining();
-
 // Create mock API that returns chainable methods
 const mockApi = jest.fn(() => ({
   put: mockPut,
@@ -49,5 +36,4 @@ module.exports = {
   mockDelete,
   mockHeader,
   mockVersion,
-  resetChaining,
 };

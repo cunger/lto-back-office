@@ -56,10 +56,9 @@ async function uploadData(items) {
   const trashes = items.filter(item => item.type == 'Trash');
 
   let response;
-
   try {
     response = await SharePoint.appendFisheriesData(catches);
-    
+    console.log(response);    
     if (!response?.error) {
       for (let item of catches) {
         result.uploaded.push(item.id);
@@ -74,7 +73,7 @@ async function uploadData(items) {
 
   try {
     response = await SharePoint.appendBeachCleanData(trashes);
-
+    console.log(response);    
     if (!response?.error) {
       for (let item of trashes) {
         result.uploaded.push(item.id);

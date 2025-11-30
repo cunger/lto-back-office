@@ -20,9 +20,6 @@ router.get('/ping', (request, response) => {
 router.post('/photo', middleware.single('file'), async (request, response) => {
   console.log('Incoming /photo...');
 
-  console.log(request.headers);
-  console.log(request.files);
-
   if (!request.headers[HEADER_KEY]) return response.sendStatus(400);
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(400);
 
@@ -50,7 +47,6 @@ router.post('/sessions', async (request, response) => {
     if (!session || !session.id) return response.sendStatus(400);
 
     const result = await uploader.uploadSession(session);
-    console.log(result);
 
     return response.status(200).json(result);
   } catch (error) {
@@ -64,9 +60,6 @@ router.post('/sessions', async (request, response) => {
 router.post('/data', async (request, response) => {
   console.log('Incoming /data...');
 
-  console.log(request.headers);  
-  console.log(request.body);
-
   if (!request.headers[HEADER_KEY]) return response.sendStatus(400);
   if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(400);
 
@@ -75,7 +68,6 @@ router.post('/data', async (request, response) => {
     if (!items) return response.sendStatus(400);
 
     const result = await uploader.uploadData(items);
-    console.log(result);
 
     return response.status(200).json(result);
   } catch (error) {

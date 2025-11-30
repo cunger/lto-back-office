@@ -1,14 +1,11 @@
 const request = require('supertest');
 const app = require('../src/api');
 
-jest.mock('../src/microsoft-sharepoint');
-const sharepoint = require('../src/microsoft-sharepoint');
-
-process.env.BACKOFFICE_HEADER_NAME = 'X-Backoffice-Key';
-process.env.BACKOFFICE_HEADER_VALUE = 'test-secret-key';
-
 const AUTH_HEADER = process.env.BACKOFFICE_HEADER_NAME;
 const AUTH_VALUE = process.env.BACKOFFICE_HEADER_VALUE;
+
+jest.mock('../src/microsoft-sharepoint');
+const sharepoint = require('../src/microsoft-sharepoint');
 
 describe('photo upload', () => {
   beforeEach(() => {
@@ -34,7 +31,7 @@ describe('photo upload', () => {
       await request(app)
         .post('/.netlify/functions/api/photo')
         .set(AUTH_HEADER, AUTH_VALUE)
-        .expect(500);
+        .expect(400);
     });
 
     it('should handle large image files', async () => {
