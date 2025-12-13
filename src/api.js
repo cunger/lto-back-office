@@ -20,8 +20,10 @@ router.get('/ping', (request, response) => {
 router.post('/photo', middleware.single('file'), async (request, response) => {
   console.log('Incoming /photo...');
 
-  if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
-  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
+  if (!request.headers[HEADER_KEY]) return response.sendStatus(400);
+  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(400);
+
+  if (!request.file) return response.sendStatus(400);
 
   try {
     const url = await uploader.uploadPhoto(request.file);
@@ -34,18 +36,38 @@ router.post('/photo', middleware.single('file'), async (request, response) => {
   }
 });
 
+router.post('/sessions', async (request, response) => {
+  console.log('Incoming session...');
+  
+  if (!request.headers[HEADER_KEY]) return response.sendStatus(400);
+  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(400);
+
+  try {
+    const session = request.body;
+    if (!session || !session.id) return response.sendStatus(400);
+
+    const result = await uploader.uploadSession(session);
+
+    return response.status(200).json(result);
+  } catch (error) {
+    console.log(`[ERROR: /sessions] ${error}`);
+    return response.status(500).json({ errors: `${error}` });
+  }
+});
+
+// This is a legacy endpoint, kept for older versions.
+// Do not touch, to ensure backwards compatibility.
 router.post('/data', async (request, response) => {
   console.log('Incoming /data...');
-  
-  if (!request.headers[HEADER_KEY]) return response.sendStatus(401);
-  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(401);
+
+  if (!request.headers[HEADER_KEY]) return response.sendStatus(400);
+  if (request.headers[HEADER_KEY] !== HEADER_VAL) return response.sendStatus(400);
 
   try {
     const items = request.body.items;
     if (!items) return response.sendStatus(400);
 
-    const result = await uploader.upload(items);
-    console.log(result);
+    const result = await uploader.uploadData(items);
 
     return response.status(200).json(result);
   } catch (error) {

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test": "jest",
     "start": "node local-server.js",
     "build": ""
   },
@@ -25,5 +26,10 @@
     "multer": "1.4.5-lts.1",
     "npm": "^10.9.0",
     "serverless-http": "3.2.0"
+  },
+  "devDependencies": {
+    "jest": "29.7.0",
+    "supertest": "6.3.3",
+    "@types/jest": "29.5.11"
   }
 }
