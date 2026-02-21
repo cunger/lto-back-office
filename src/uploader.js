@@ -11,9 +11,9 @@ async function uploadSession(session) {
 
   try {
     // Append session row in table.
-    if (session.type == 'BeachClean') {
+    if (session.type.startsWith('BeachClean')) {
       response = await SharePoint.appendBeachCleanSession(session);
-    } else if (session.type == 'Fisheries') {
+    } else if (session.type.startsWith('Fisheries')) {
       response = await SharePoint.appendFisheriesSession(session);
     } else {
       result.errors.push(`Unknown session type: ${session.type}`);
@@ -27,9 +27,9 @@ async function uploadSession(session) {
     }
 
     // Append item rows in table.
-    if (session.type == 'BeachClean') {
+    if (session.type.startsWith('BeachClean')) {
       response = await SharePoint.appendBeachCleanItems(session);
-    } else if (session.type == 'Fisheries') {
+    } else if (session.type.startsWith('Fisheries')) {
       response = await SharePoint.appendFisheriesItems(session);
     } else {
       result.errors.push(`Unknown session type: ${session.type}`);
